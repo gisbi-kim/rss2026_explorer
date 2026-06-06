@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSS 2026 Paper Explorer</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;
+  --bg-soft: #fafafa;
+  --panel: #ffffff;
+  --border: #d2d2d7;
+  --border-soft: #e5e5ea;
+  --text: #1d1d1f;
+  --text-2: #424245;
+  --muted: #6e6e73;
+  --muted-2: #86868b;
+  --accent: #0066cc;
+  --accent-hover: #0058b0;
+  --accent-soft: rgba(0, 102, 204, 0.08);
+  --green: #248a3d;
+  --orange: #b25000;
+  --purple: #6e3ad6;
+  --pink: #c0185c;
+  --yellow: #8a6d00;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.47;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 54px;
+  border-bottom: 1px solid var(--border-soft);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+.topbar .inner {
+  max-width: 1440px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.brand {
+  color: var(--text);
+  font-weight: 650;
+  font-size: 17px;
+  letter-spacing: 0;
+}
+.topbar .meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+.topbar .right {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-alt);
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.pill b { color: var(--text); font-weight: 650; }
+.pill.accent {
+  background: var(--accent-soft);
+  border-color: rgba(0, 102, 204, 0.18);
+  color: var(--accent);
+}
+.layout {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+.sidebar {
+  position: sticky;
+  top: 66px;
+  padding: 28px 0;
+  max-height: calc(100vh - 66px);
+  overflow: auto;
+}
+.sidebar h4 {
+  margin: 18px 0 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sidebar a, .side-filter {
+  display: block;
+  width: 100%;
+  margin: 2px 0;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-2);
+  text-align: left;
+  font-size: 13px;
+}
+.sidebar a:hover, .side-filter:hover {
+  background: var(--bg-alt);
+  color: var(--text);
+  text-decoration: none;
+}
+main {
+  min-width: 0;
+  padding: 30px 0 56px;
+}
+section {
+  scroll-margin-top: 76px;
+  margin-bottom: 34px;
+}
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+h1, h2, h3, p { margin-top: 0; }
+h1 {
+  margin-bottom: 8px;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+h2 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 0;
+}
+h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  letter-spacing: 0;
+}
+.lede {
+  max-width: 820px;
+  margin-bottom: 18px;
+  color: var(--text-2);
+  font-size: 17px;
+}
+.section-sub {
+  max-width: 920px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.metric {
+  min-height: 112px;
+  padding: 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+.metric .value {
+  font-size: 32px;
+  font-weight: 750;
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.metric .label {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.metric .desc {
+  margin-top: 8px;
+  color: var(--text-2);
+  font-size: 13px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 14px;
+}
+.panel {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+.bar-list {
+  display: grid;
+  gap: 8px;
+}
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 250px) minmax(0, 1fr) 42px;
+  gap: 10px;
+  align-items: center;
+  min-height: 28px;
+}
+.bar-label {
+  overflow: hidden;
+  color: var(--text-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.bar-label button {
+  all: unset;
+  cursor: pointer;
+}
+.bar-label button:hover { color: var(--accent); text-decoration: underline; }
+.bar-label button.active {
+  color: var(--accent);
+  font-weight: 650;
+}
+.bar-track {
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--bg-alt);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background: var(--accent);
+}
+.bar-count {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.topic-fill-0 { background: #0066cc; }
+.topic-fill-1 { background: #248a3d; }
+.topic-fill-2 { background: #b25000; }
+.topic-fill-3 { background: #6e3ad6; }
+.topic-fill-4 { background: #c0185c; }
+.topic-fill-5 { background: #8a6d00; }
+.topic-fill-6 { background: #087a8f; }
+.topic-fill-7 { background: #4b6b1b; }
+.topic-fill-8 { background: #9a3412; }
+.topic-fill-9 { background: #3b5bdb; }
+.toolbar {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: var(--bg-soft);
+}
+.toolbar-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+.toolbar input[type="text"], .toolbar select {
+  min-height: 36px;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--panel);
+  color: var(--text);
+}
+.search-row input[type="text"] { flex: 1 1 160px; }
+.search-row select { flex: 0 0 86px; }
+.filter-row select { flex: 1 1 150px; }
+.view-row select { flex: 1 1 170px; }
+.btn {
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--panel);
+  color: var(--text-2);
+}
+.btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.btn.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+.btn.primary:hover {
+  background: var(--accent-hover);
+  color: #ffffff;
+  text-decoration: none;
+}
+.result-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--text-2);
+  font-size: 12px;
+}
+button.filter-chip {
+  cursor: pointer;
+}
+button.filter-chip:hover {
+  border-color: rgba(0, 102, 204, 0.35);
+  color: var(--accent);
+}
+.papers {
+  display: grid;
+  gap: 10px;
+}
+.paper {
+  padding: 14px 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+.paper-head {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+.paper-title {
+  all: unset;
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 680;
+  line-height: 1.35;
+  cursor: pointer;
+}
+.paper-title:hover { color: var(--accent); }
+.paper-link {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 12px;
+}
+.paper-link:hover {
+  border-color: rgba(0, 102, 204, 0.35);
+  background: var(--accent-soft);
+  text-decoration: none;
+}
+.paper-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.paper-authors {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 9px;
+  color: var(--text-2);
+  font-size: 13.5px;
+}
+.authors-label {
+  margin-right: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.author-button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  min-height: 23px;
+  padding: 2px 7px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.author-button:hover {
+  border-color: rgba(0, 102, 204, 0.25);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.author-button.active,
+.tag.active,
+.side-filter.active {
+  border-color: rgba(0, 102, 204, 0.32);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 24px;
+  padding: 3px 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--bg-alt);
+  color: var(--muted);
+  font-size: 12px;
+}
+button.tag:hover {
+  border-color: rgba(0, 102, 204, 0.35);
+  color: var(--accent);
+}
+.tag.session { color: var(--accent); background: var(--accent-soft); }
+.tag.topic { background: #fff; }
+.paper-detail {
+  display: none;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+  color: var(--text-2);
+  font-size: 13px;
+}
+.paper.open .paper-detail { display: block; }
+.detail-grid {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 6px 12px;
+}
+.detail-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.heatmap-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+}
+.heatmap {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.heatmap th,
+.heatmap td {
+  border-bottom: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft);
+  padding: 6px;
+  text-align: center;
+}
+.heatmap th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg-soft);
+  color: var(--muted);
+  font-weight: 650;
+}
+.heatmap th:first-child {
+  left: 0;
+  z-index: 2;
+}
+.heatmap td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--panel);
+  color: var(--text-2);
+  text-align: left;
+  white-space: nowrap;
+}
+.heat-cell {
+  min-width: 42px;
+  height: 28px;
+  border-radius: 4px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 28px;
+}
+.empty {
+  padding: 28px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  text-align: center;
+}
+.source-note {
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 12px;
+}
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding: 0 16px; }
+  .sidebar { position: static; max-height: none; padding: 14px 0 0; }
+  .sidebar nav {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .sidebar h4, .side-filter { display: none; }
+  .sidebar a { flex: 0 0 auto; width: auto; white-space: nowrap; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .topbar .meta, .topbar .right .pill:not(.accent) { display: none; }
+  .topbar .inner { padding: 0 14px; }
+  main { padding-top: 20px; }
+  .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .section-head { align-items: start; flex-direction: column; }
+  .toolbar-row { flex-wrap: wrap; }
+  .toolbar input[type="text"], .toolbar select, .btn { flex: 1 1 100%; }
+  .bar-row { grid-template-columns: minmax(120px, 1fr) minmax(80px, 1fr) 36px; }
+  .paper-head { flex-direction: column; }
+  .paper-link { align-self: flex-start; }
+  .detail-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 460px) {
+  .metric-grid { grid-template-columns: 1fr; }
+  h1 { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="inner">
+      <a class="brand" href="#overview" id="brandHome">RSS 2026 Paper Explorer</a>
+      <div class="meta">Accepted Papers / Robotics: Science and Systems</div>
+      <div class="right">
+        <span class="pill accent"><b id="topPaperCount">0</b> papers</span>
+        <span class="pill"><b id="topSessionCount">0</b> sessions</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Page navigation">
+      <nav>
+        <a href="#overview">Overview</a>
+        <a href="#sessions">Sessions</a>
+        <a href="#topics">Hot topics</a>
+        <a href="#authors">Authors</a>
+        <a href="#matrix">Session x Topic</a>
+        <a href="#search">Find papers</a>
+      </nav>
+      <h4>Quick Topics</h4>
+      <div id="quickTopics"></div>
+      <h4>Quick Sessions</h4>
+      <div id="quickSessions"></div>
+    </aside>
+
+    <main>
+      <section id="overview">
+        <h1>RSS 2026 Paper Explorer</h1>
+        <p class="lede">Search and scan the accepted papers for RSS 2026 by title, author, session, and title-derived topic tags. The source data is the saved RSS accepted papers page from Downloads.</p>
+        <div class="metric-grid">
+          <div class="metric">
+            <div class="value" id="metricPapers">0</div>
+            <div class="label">Accepted papers</div>
+            <div class="desc">Parsed from the official accepted-papers table.</div>
+          </div>
+          <div class="metric">
+            <div class="value" id="metricSessions">0</div>
+            <div class="label">Sessions</div>
+            <div class="desc" id="largestSession">Largest session pending</div>
+          </div>
+          <div class="metric">
+            <div class="value" id="metricAvgAuthors">0.0</div>
+            <div class="label">Avg authors</div>
+            <div class="desc">Computed from comma-separated author names.</div>
+          </div>
+          <div class="metric">
+            <div class="value" id="metricTopics">0</div>
+            <div class="label">Topic tags</div>
+            <div class="desc">Auto-tagged from titles and sessions.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="sessions">
+        <div class="section-head">
+          <div>
+            <h2>Session Distribution</h2>
+            <div class="section-sub">Click a bar label to filter the paper list.</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>All sessions</h3>
+            <div id="sessionBars" class="bar-list"></div>
+          </div>
+          <div class="panel">
+            <h3>Session size summary</h3>
+            <div id="sessionSummary" class="bar-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="topics">
+        <div class="section-head">
+          <div>
+            <h2>Hot Topics</h2>
+            <div class="section-sub">These are rule-based tags inferred from titles and session names, not official RSS keywords. Papers can have multiple tags.</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Title-derived topics</h3>
+            <div id="topicBars" class="bar-list"></div>
+          </div>
+          <div class="panel">
+            <h3>Topic coverage</h3>
+            <div id="topicCoverage" class="bar-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="authors">
+        <div class="section-head">
+          <div>
+            <h2>Authors</h2>
+            <div class="section-sub">Author counts and repeat-name counts are derived from the accepted-papers table only.</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Authors per paper</h3>
+            <div id="authorCountBars" class="bar-list"></div>
+          </div>
+          <div class="panel">
+            <h3>Repeat authors</h3>
+            <div id="topAuthors" class="bar-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="matrix">
+        <div class="section-head">
+          <div>
+            <h2>Session x Topic</h2>
+            <div class="section-sub">Top title-derived topics across all RSS sessions. Click a session or topic through the charts above to drill down in the paper list.</div>
+          </div>
+        </div>
+        <div class="heatmap-wrap">
+          <table class="heatmap" id="heatmapTable"></table>
+        </div>
+      </section>
+
+      <section id="search">
+        <div class="section-head">
+          <div>
+            <h2>Find Papers</h2>
+            <div class="section-sub">Search across titles, authors, sessions, IDs, and auto topic tags. Up to three search boxes can be combined with AND or OR.</div>
+          </div>
+        </div>
+        <div class="toolbar" aria-label="Search and filters">
+          <div class="toolbar-row search-row">
+            <input type="text" id="q1" placeholder="Search 1: manipulation" autocomplete="off">
+            <select id="searchMode" title="Combine search boxes">
+              <option value="AND">AND</option>
+              <option value="OR">OR</option>
+            </select>
+            <input type="text" id="q2" placeholder="Search 2" autocomplete="off">
+            <input type="text" id="q3" placeholder="Search 3" autocomplete="off">
+          </div>
+          <div class="toolbar-row filter-row">
+            <select id="sessionFilter"><option value="">All sessions</option></select>
+            <select id="topicFilter"><option value="">All topics</option></select>
+            <select id="authorFilter">
+              <option value="">Any author count</option>
+              <option value="1-3">1-3 authors</option>
+              <option value="4-6">4-6 authors</option>
+              <option value="7-10">7-10 authors</option>
+              <option value="11-999">11+ authors</option>
+            </select>
+          </div>
+          <div class="toolbar-row view-row">
+            <select id="sortFilter">
+              <option value="id-asc">Sort by paper ID</option>
+              <option value="title-asc">Title A-Z</option>
+              <option value="session-asc">Session A-Z</option>
+              <option value="authors-desc">Author count high-low</option>
+              <option value="authors-asc">Author count low-high</option>
+            </select>
+            <select id="pageSizeFilter">
+              <option value="25">25 per page</option>
+              <option value="50">50 per page</option>
+              <option value="100">100 per page</option>
+              <option value="all">All</option>
+            </select>
+            <button class="btn" id="downloadCsv" type="button">CSV</button>
+            <button class="btn" id="clearFilters" type="button">Clear</button>
+          </div>
+          <div class="active-filters" id="activeFilters"></div>
+        </div>
+        <div class="result-meta">
+          <div id="resultCount">0 papers</div>
+          <div id="pageInfo"></div>
+        </div>
+        <div class="papers" id="papers"></div>
+        <div class="pager" id="pager"></div>
+        <div class="source-note" id="sourceNote"></div>
+      </section>
+    </main>
+  </div>
+
+<script id="papers-data" type="application/json">[{"id":1,"session":"Manipulation 1","title":"One-Shot Real-World Demonstration Synthesis for Scalable Bimanual Manipulation","authors":"Huayi Zhou, Kui Jia","authorList":["Huayi Zhou","Kui Jia"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/1/","topics":["Manipulation","Learning"]},{"id":2,"session":"Manipulation 1","title":"Supervised Mixture-of-Experts for Surgical Grasping and Retraction","authors":"Lorenzo Mazza, Ariel Rodriguez","authorList":["Lorenzo Mazza","Ariel Rodriguez"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/2/","topics":["Manipulation","Medical and Surgical"]},{"id":3,"session":"Manipulation 1","title":"DexImit: Learning Bimanual Dexterous Manipulation from Monocular Human Videos","authors":"Juncheng Mu, Sizhe Yang, Yiming Bao, Hojin Bae, Tianming Wei, Linning Xu, Boyi Li, Huazhe Xu, Jiangmiao Pang","authorList":["Juncheng Mu","Sizhe Yang","Yiming Bao","Hojin Bae","Tianming Wei","Linning Xu","Boyi Li","Huazhe Xu","Jiangmiao Pang"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/3/","topics":["Manipulation","Learning","Human-Robot Interaction"]},{"id":4,"session":"Manipulation 1","title":"Semantic Contact Fields for Category-Level Generalizable Tool Manipulation","authors":"Kevin Yuchen Ma, Heng Zhang, Weisi Lin, Mike Zheng Shou, Yan Wu","authorList":["Kevin Yuchen Ma","Heng Zhang","Weisi Lin","Mike Zheng Shou","Yan Wu"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/4/","topics":["Manipulation"]},{"id":5,"session":"Manipulation 1","title":"Contact-Grounded Policy: Dexterous Visuotactile Policy with Generative Contact Grounding","authors":"Zhengtong Xu, Yeping Wang, Ben Abbatematteo, Jom Preechayasomboon, Sonny Chan, Nicholas Colonnese, Amirhossein H. Memar","authorList":["Zhengtong Xu","Yeping Wang","Ben Abbatematteo","Jom Preechayasomboon","Sonny Chan","Nicholas Colonnese","Amirhossein H. Memar"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/5/","topics":["Manipulation","Learning"]},{"id":6,"session":"Manipulation 1","title":"TactAlign: Human-to-Robot Policy Transfer via Tactile Alignment","authors":"Youngsun Wi, Jessica Yin, Elvis Xiang, Akash Sharma, Jitendra Malik, Mustafa Mukadam, Nima Fazeli, Tess Hellebrekers","authorList":["Youngsun Wi","Jessica Yin","Elvis Xiang","Akash Sharma","Jitendra Malik","Mustafa Mukadam","Nima Fazeli","Tess Hellebrekers"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/6/","topics":["Manipulation","Learning","Human-Robot Interaction"]},{"id":7,"session":"Manipulation 1","title":"A Systematic Study of Data Modalities and Strategies for Co-training Large Behavior Models for Robot Manipulation","authors":"Fanqi Lin, Kushal Arora, Jean Mercat, Haruki Nishimura, Paarth Shah, Chen Xu, Mengchao Zhang, Mark Zolotas, Maya Angeles, Owen Pfannenstiehl, Andrew Beaulieu, Jose Barreiros","authorList":["Fanqi Lin","Kushal Arora","Jean Mercat","Haruki Nishimura","Paarth Shah","Chen Xu","Mengchao Zhang","Mark Zolotas","Maya Angeles","Owen Pfannenstiehl","Andrew Beaulieu","Jose Barreiros"],"authorCount":12,"href":"https://roboticsconference.org/program/papers/7/","topics":["Manipulation","Learning"]},{"id":8,"session":"Manipulation 1","title":"SID: Sliding into Distribution for Robust Few-Demonstration Manipulation","authors":"Yicheng Ma, Wei Yu, Zhian Su, Xidan Zhang, Huixu Dong","authorList":["Yicheng Ma","Wei Yu","Zhian Su","Xidan Zhang","Huixu Dong"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/8/","topics":["Manipulation","Learning","Safety and Robustness"]},{"id":9,"session":"Manipulation 1","title":"UMI-Underwater: Learning Underwater Manipulation without Underwater Teleoperation","authors":"Hao Li, Long Yin Chung, Jack Goler, Ryan Zhang, Xiaochi Xie, Huy Ha, Shuran Song, Mark Cutkosky","authorList":["Hao Li","Long Yin Chung","Jack Goler","Ryan Zhang","Xiaochi Xie","Huy Ha","Shuran Song","Mark Cutkosky"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/9/","topics":["Manipulation","Learning","Human-Robot Interaction","Aerial and Field Robots"]},{"id":10,"session":"World Models & Memory","title":"Memory Retrieval in Visuomotor Policies for Long-Horizon Robot Control","authors":"Rutav Shah, Yisu Li, Femi Bello, Yuke Zhu, Roberto Martín-Martín","authorList":["Rutav Shah","Yisu Li","Femi Bello","Yuke Zhu","Roberto Martín-Martín"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/10/","topics":["Control and Dynamics","Language and VLM"]},{"id":11,"session":"World Models & Memory","title":"RAG-Diff: Adapting Diffusion Policies to Dynamic Constraints with Retrieval-Augmented Guidance","authors":"Ruolin Ye, Nayoung Ha, Shuaixing Chen, Qiandao Liu, Gavin Chen, Shaoyang Stassen, Mark Zolotas, Jose Barreiros, Tapomayukh Bhattacharjee","authorList":["Ruolin Ye","Nayoung Ha","Shuaixing Chen","Qiandao Liu","Gavin Chen","Shaoyang Stassen","Mark Zolotas","Jose Barreiros","Tapomayukh Bhattacharjee"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/11/","topics":["Learning","Language and VLM","Safety and Robustness"]},{"id":12,"session":"World Models & Memory","title":"Self-Improving Robot Policy with Compositional World Model","authors":"Jiazhi Yang, Kunyang Lin, Wencong Zhang, Jinwei Li, Tianwei Lin, Longyan Wu, Ya-Qin Zhang, Hao Zhao, Ping Luo, Zhizhong Su, Hongyang Li, Xiangyu Yue, Li Chen","authorList":["Jiazhi Yang","Kunyang Lin","Wencong Zhang","Jinwei Li","Tianwei Lin","Longyan Wu","Ya-Qin Zhang","Hao Zhao","Ping Luo","Zhizhong Su","Hongyang Li","Xiangyu Yue","Li Chen"],"authorCount":13,"href":"https://roboticsconference.org/program/papers/12/","topics":["Learning","Language and VLM"]},{"id":13,"session":"World Models & Memory","title":"HAIC: Humanoid Agile Object Interaction Control via Dynamics-Aware World Model","authors":"Dongting Li, Xingyu Chen, Qianyang Wu, Bo Chen, Sikai Wu, Hanyu Wu, Guoyao Zhang, Liang Li, Mingliang Zhou, Diyun Xiang, Jianzhu Ma, Qiang Zhang, Renjing Xu","authorList":["Dongting Li","Xingyu Chen","Qianyang Wu","Bo Chen","Sikai Wu","Hanyu Wu","Guoyao Zhang","Liang Li","Mingliang Zhou","Diyun Xiang","Jianzhu Ma","Qiang Zhang","Renjing Xu"],"authorCount":13,"href":"https://roboticsconference.org/program/papers/13/","topics":["Control and Dynamics","Human-Robot Interaction","Humanoids and Locomotion","Language and VLM"]},{"id":14,"session":"World Models & Memory","title":"Collaborating Visual and Parameter Spaces for Consistent Long-Horizon Embodied World Model","authors":"Longyu Chen, Heng Li, Wei Yang, Manqi Zhao, Dongsheng Jiang","authorList":["Longyu Chen","Heng Li","Wei Yang","Manqi Zhao","Dongsheng Jiang"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/14/","topics":["Perception","Human-Robot Interaction","Language and VLM"]},{"id":15,"session":"World Models & Memory","title":"Act2Goal: From World Model To General Goal-conditioned Policy","authors":"Pengfei Zhou, Liliang Chen, Shengcong Chen, Di Chen, Wenzhi Zhao, Rongjun Jin, Guanghui Ren, Jianlan Luo","authorList":["Pengfei Zhou","Liliang Chen","Shengcong Chen","Di Chen","Wenzhi Zhao","Rongjun Jin","Guanghui Ren","Jianlan Luo"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/15/","topics":["Learning","Language and VLM"]},{"id":16,"session":"World Models & Memory","title":"Causal World Modeling for Robot Control","authors":"Lin Li, Qihang Zhang, Yiming Luo, Shuai Yang, Ruilin Wang, Zhangluyao, Mingrui Yu, Zelin Gao, Nan Xue, Boyu Zhou, Xing Zhu, Mingyu Ding, Yujun Shen, Yinghao Xu","authorList":["Lin Li","Qihang Zhang","Yiming Luo","Shuai Yang","Ruilin Wang","Zhangluyao","Mingrui Yu","Zelin Gao","Nan Xue","Boyu Zhou","Xing Zhu","Mingyu Ding","Yujun Shen","Yinghao Xu"],"authorCount":14,"href":"https://roboticsconference.org/program/papers/16/","topics":["Control and Dynamics","Language and VLM"]},{"id":17,"session":"World Models & Memory","title":"Simulation Distillation: Pretraining World Models in Simulation for Rapid Real-World Adaptation","authors":"Jacob Levy, Tyler Westenbroek, Kevin Huang, Fernando Palafox, Patrick Yin, Shayegan Omidshafiei, Dong-Ki Kim, Abhishek Gupta, David Fridovich-Keil","authorList":["Jacob Levy","Tyler Westenbroek","Kevin Huang","Fernando Palafox","Patrick Yin","Shayegan Omidshafiei","Dong-Ki Kim","Abhishek Gupta","David Fridovich-Keil"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/17/","topics":["Language and VLM","Simulation and Digital Twins"]},{"id":18,"session":"World Models & Memory","title":"Interactive World Simulator for Robot Policy Training and Evaluation","authors":"Yixuan Wang, Rhythm Syed, Fangyu Wu, Mengchao Zhang, Aykut Onol, Jose Barreiros, Hooshang Nayyeri, Tony Dear, Huan Zhang, Yunzhu Li","authorList":["Yixuan Wang","Rhythm Syed","Fangyu Wu","Mengchao Zhang","Aykut Onol","Jose Barreiros","Hooshang Nayyeri","Tony Dear","Huan Zhang","Yunzhu Li"],"authorCount":10,"href":"https://roboticsconference.org/program/papers/18/","topics":["Learning","Language and VLM"]},{"id":19,"session":"Humanoids","title":"HUSKY: Humanoid Skateboarding System via Physics-Aware Whole-Body Control","authors":"Jinrui Han, Dewei Wang, Chenyun Zhang, Xinzhe Liu, Ping Luo, Chenjia Bai, Xuelong Li","authorList":["Jinrui Han","Dewei Wang","Chenyun Zhang","Xinzhe Liu","Ping Luo","Chenjia Bai","Xuelong Li"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/19/","topics":["Control and Dynamics","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":20,"session":"Humanoids","title":"Perceptive Humanoid Parkour: Chaining Dynamic Human Skills via Motion Matching","authors":"Zhen Wu, Xiaoyu Huang, Lujie Yang, Yuanhang Zhang, Xi Chen, Pieter Abbeel, Rocky Duan, Angjoo Kanazawa, Carmelo Sferrazza, Guanya Shi, Karen Liu","authorList":["Zhen Wu","Xiaoyu Huang","Lujie Yang","Yuanhang Zhang","Xi Chen","Pieter Abbeel","Rocky Duan","Angjoo Kanazawa","Carmelo Sferrazza","Guanya Shi","Karen Liu"],"authorCount":11,"href":"https://roboticsconference.org/program/papers/20/","topics":["Learning","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":21,"session":"Humanoids","title":"Ψ0Ψ0\\Psi_0: An Open Foundation Model Towards Universal Humanoid Loco-Manipulation","authors":"Songlin Wei, Hongyi Jing, Boqian Li, Zhenyu Zhao, Jiageng Mao, Zhenhao Ni, Sicheng He, Sheng Zang, Xiawei Liu, Kaidi Kang, Jie Liu, Weiduo Yuan, Marco Pavone, Di Huang, Yue Wang","authorList":["Songlin Wei","Hongyi Jing","Boqian Li","Zhenyu Zhao","Jiageng Mao","Zhenhao Ni","Sicheng He","Sheng Zang","Xiawei Liu","Kaidi Kang","Jie Liu","Weiduo Yuan","Marco Pavone","Di Huang","Yue Wang"],"authorCount":15,"href":"https://roboticsconference.org/program/papers/21/","topics":["Manipulation","Learning","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":22,"session":"Humanoids","title":"X-Loco: Towards Generalist Humanoid Locomotion Control via Synergetic Policy Distillation","authors":"Dewei Wang, Xinmiao Wang, Chenyun Zhang, Jiyuan Shi, Yingnan Zhao, Chenjia Bai, Xuelong Li","authorList":["Dewei Wang","Xinmiao Wang","Chenyun Zhang","Jiyuan Shi","Yingnan Zhao","Chenjia Bai","Xuelong Li"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/22/","topics":["Learning","Control and Dynamics","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":23,"session":"Humanoids","title":"Learning to Evolve: Multi-modal Interactive Fields for Robust Humanoid Navigation in Dynamic Environments","authors":"Peifeng Jiang, Hong Liu, Jin Jin, Wenshuai Wang, Xia Li","authorList":["Peifeng Jiang","Hong Liu","Jin Jin","Wenshuai Wang","Xia Li"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/23/","topics":["Learning","Navigation and Planning","Human-Robot Interaction","Humanoids and Locomotion","Safety and Robustness"]},{"id":24,"session":"Humanoids","title":"MOBIUS: A Multi-Modal Bipedal Robot that can Walk, Crawl, Climb, and Roll","authors":"Alexander Schperberg, Yusuke Tanaka, Stefano Di Cairano, Dennis Hong","authorList":["Alexander Schperberg","Yusuke Tanaka","Stefano Di Cairano","Dennis Hong"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/24/","topics":["Human-Robot Interaction","Humanoids and Locomotion"]},{"id":25,"session":"Humanoids","title":"TeleGate: Whole-Body Humanoid Teleoperation via Gated Expert Selection with Motion Prior","authors":"Jie Li, Bing Tang, Feng Wu","authorList":["Jie Li","Bing Tang","Feng Wu"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/25/","topics":["Human-Robot Interaction","Humanoids and Locomotion"]},{"id":26,"session":"Humanoids","title":"Generalizing from References using a Multi-Task Reference and Goal-Driven RL Framework","authors":"Jiashun Wang, M. Eva Mungai, He Li, Jean Pierre Sleiman, Jessica K. Hodgins, Farbod Farshidian","authorList":["Jiashun Wang","M. Eva Mungai","He Li","Jean Pierre Sleiman","Jessica K. Hodgins","Farbod Farshidian"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/26/","topics":["Human-Robot Interaction","Humanoids and Locomotion"]},{"id":27,"session":"Humanoids","title":"Now You See That: Learning End-to-End Humanoid Locomotion from Raw Pixels","authors":"Wandong Sun, Yongbo Su, Huangguo, Zilong Zhang, Wei Yingdong, Sen Xu, Sheng Cao, Xingwu Tian, Baoshi Cao, Yang Liu, Bin Yan, Yan Xie, Xie Zongwu","authorList":["Wandong Sun","Yongbo Su","Huangguo","Zilong Zhang","Wei Yingdong","Sen Xu","Sheng Cao","Xingwu Tian","Baoshi Cao","Yang Liu","Bin Yan","Yan Xie","Xie Zongwu"],"authorCount":13,"href":"https://roboticsconference.org/program/papers/27/","topics":["Learning","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":28,"session":"Humanoids","title":"Mind Your Steps: A General Learning Framework for Accurate Humanoid Foothold Tracking","authors":"Alessandro Montenegro, Shihao Li, Puze Liu, Alberto Maria Metelli, Jan Peters","authorList":["Alessandro Montenegro","Shihao Li","Puze Liu","Alberto Maria Metelli","Jan Peters"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/28/","topics":["Learning","Control and Dynamics","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":29,"session":"Humanoids","title":"PRIME: Physically-consistent Robotic Inertial and Motion Estimation for Legged and Humanoid Robots","authors":"Jiarong Kang, Kunzhao Ren, Tao Pang, Xiaobin Xiong","authorList":["Jiarong Kang","Kunzhao Ren","Tao Pang","Xiaobin Xiong"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/29/","topics":["Perception","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":30,"session":"Humanoids","title":"HiWET: Hierarchical World-Frame End-Effector Tracking for Long-Horizon Humanoid Loco-Manipulation","authors":"Zhanxiang Cao, Liyun Yan, Yang Zhang, Sirui Chen, Jianming Ma, Tianyue Zhan, Shengcheng Fu, Yufei Jia, Cewu Lu, Yue Gao","authorList":["Zhanxiang Cao","Liyun Yan","Yang Zhang","Sirui Chen","Jianming Ma","Tianyue Zhan","Shengcheng Fu","Yufei Jia","Cewu Lu","Yue Gao"],"authorCount":10,"href":"https://roboticsconference.org/program/papers/30/","topics":["Manipulation","Control and Dynamics","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":31,"session":"Humanoids","title":"OmniXtreme: Breaking the Generality Barrier in High-Dynamic Humanoid Control","authors":"Yunshen Wang, Shaohang Zhu, Peiyuan Zhi, Yuhan Li, Jiaxin Li, Yong-Lu Li, Yuchen Xiao, Xingxing Wang, Baoxiong Jia, Siyuan Huang","authorList":["Yunshen Wang","Shaohang Zhu","Peiyuan Zhi","Yuhan Li","Jiaxin Li","Yong-Lu Li","Yuchen Xiao","Xingxing Wang","Baoxiong Jia","Siyuan Huang"],"authorCount":10,"href":"https://roboticsconference.org/program/papers/31/","topics":["Control and Dynamics","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":32,"session":"Multi-robot Systems","title":"Distributed Pose Graph Optimization via Continuous Riemannian Dynamics","authors":"Jaeho Shin, Maani Ghaffari, Yulun Tian","authorList":["Jaeho Shin","Maani Ghaffari","Yulun Tian"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/32/","topics":["SLAM and Localization","Control and Dynamics","Multi-Robot"]},{"id":33,"session":"Multi-robot Systems","title":"Adapting Execution-Time Objectives for Multi-Robot Policies via Collaborative Flow Policy Guidance","authors":"Williard Joshua Jose, Yuhao Li, Zihao Deng, Hao Zhang","authorList":["Williard Joshua Jose","Yuhao Li","Zihao Deng","Hao Zhang"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/33/","topics":["Learning","Multi-Robot","Human-Robot Interaction"]},{"id":34,"session":"Multi-robot Systems","title":"Rhythm: Learning Interactive Whole-Body Control for Dual Humanoids","authors":"Hongjin Chen, Wei Zhang, Pengfei Li, Shihao Ma, Ke Ma, Yujie Jin, Zijun Xu, Xiaohui Wang, Yupeng Zheng, Zining Wang, Jieru Zhao, Yilun Chen, Wenchao Ding","authorList":["Hongjin Chen","Wei Zhang","Pengfei Li","Shihao Ma","Ke Ma","Yujie Jin","Zijun Xu","Xiaohui Wang","Yupeng Zheng","Zining Wang","Jieru Zhao","Yilun Chen","Wenchao Ding"],"authorCount":13,"href":"https://roboticsconference.org/program/papers/34/","topics":["Learning","Control and Dynamics","Multi-Robot","Human-Robot Interaction","Humanoids and Locomotion"]},{"id":35,"session":"Multi-robot Systems","title":"Teaming Linear Temporal Logic: Coordinated Behavior Specification in Heterogeneous Multi-Agent Systems","authors":"Thomas Fawcett, George Konidaris","authorList":["Thomas Fawcett","George Konidaris"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/35/","topics":["Learning","Multi-Robot"]},{"id":36,"session":"Multi-robot Systems","title":"A Closed-Loop Multi-Agent Framework for Robust Multi-Robot Manipulation","authors":"Yi-Xiang He, Lan Wei, Haoming Cen, Jian-Jian Jiang, Zhuohao Li, Guanxing Lu, Yihan Yang, Dandan Zhang, Wei-Shi Zheng","authorList":["Yi-Xiang He","Lan Wei","Haoming Cen","Jian-Jian Jiang","Zhuohao Li","Guanxing Lu","Yihan Yang","Dandan Zhang","Wei-Shi Zheng"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/36/","topics":["Manipulation","Multi-Robot","Safety and Robustness"]},{"id":37,"session":"Multi-robot Systems","title":"USER: A Unified and Extensible System for Online Real-World Policy Learning in Embodied AI","authors":"Hongzhi Zang, Shu'ang Yu, Hao Lin, Tianxing Zhou, Zefang Huang, Zhen Guo, Xin Xu, Yuze Sheng, Jiakai Zhou, Shizhe Zhang, Feng Gao, Wenhao Tang, Yufeng Yue, Quanlu Zhang, Xinlei Chen, Chao Yu, Yu Wang","authorList":["Hongzhi Zang","Shu'ang Yu","Hao Lin","Tianxing Zhou","Zefang Huang","Zhen Guo","Xin Xu","Yuze Sheng","Jiakai Zhou","Shizhe Zhang","Feng Gao","Wenhao Tang","Yufeng Yue","Quanlu Zhang","Xinlei Chen","Chao Yu","Yu Wang"],"authorCount":17,"href":"https://roboticsconference.org/program/papers/37/","topics":["Learning","Multi-Robot"]},{"id":38,"session":"Multi-robot Systems","title":"KlaskTron: An Open-Source Platform for Physical Adversarial Multi-Agent RL","authors":"Aswin Karthik Ramachandran Venkatapathy, Jona Schulz, Maurus Derungs, Carlo Angelini, Tobias Meier, Raffaello D'andrea","authorList":["Aswin Karthik Ramachandran Venkatapathy","Jona Schulz","Maurus Derungs","Carlo Angelini","Tobias Meier","Raffaello D'andrea"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/38/","topics":["Multi-Robot","Safety and Robustness"]},{"id":39,"session":"Multi-robot Systems","title":"Event-Driven Sleep-Wake Scheduling for Heterogeneous Robots under LTL Constraints","authors":"Xuyang Li, Lei-Lei Li, Jianwu Fang, Boyuan Chen, Jianru Xue","authorList":["Xuyang Li","Lei-Lei Li","Jianwu Fang","Boyuan Chen","Jianru Xue"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/39/","topics":["Multi-Robot","Safety and Robustness"]},{"id":40,"session":"Multi-robot Systems","title":"Interactive Knowledge Distillation with Adaptive Teachers in Cooperative Multi-Agent Reinforcement Learning","authors":"Minwoo Cho, Batuhan Altundas, Matthew Craig Gombolay","authorList":["Minwoo Cho","Batuhan Altundas","Matthew Craig Gombolay"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/40/","topics":["Learning","Multi-Robot"]},{"id":41,"session":"Multi-robot Systems","title":"Model-Based Diffusion Optimal Control for Multi-Robot Motion Planning","authors":"Zhilin He, Yorai Shaoul, Jiaoyang Li","authorList":["Zhilin He","Yorai Shaoul","Jiaoyang Li"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/41/","topics":["Learning","Navigation and Planning","Control and Dynamics","Multi-Robot"]},{"id":42,"session":"Multi-robot Systems","title":"Optimal UGV–UAV Cooperative Partitioning and Inspection of Shortest Paths","authors":"Ninh Nguyen, Srinivas Akella","authorList":["Ninh Nguyen","Srinivas Akella"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/42/","topics":["Control and Dynamics","Multi-Robot","Aerial and Field Robots"]},{"id":43,"session":"Multi-robot Systems","title":"Time-Aggregated Connectivity Maintenance for Multi-Robot Networks","authors":"Hao Liu, Yupeng Yang, Yanze Zhang, Yiwei Lyu, Wenhao Luo","authorList":["Hao Liu","Yupeng Yang","Yanze Zhang","Yiwei Lyu","Wenhao Luo"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/43/","topics":["Multi-Robot"]},{"id":44,"session":"Multi-robot Systems","title":"Safe Multi-Agent Navigation via Constrained HJB-Informed Learning","authors":"Fenglan Wang, Shu Xinguo, Lei He, Lin Zhao","authorList":["Fenglan Wang","Shu Xinguo","Lei He","Lin Zhao"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/44/","topics":["Learning","Navigation and Planning","Multi-Robot","Safety and Robustness"]},{"id":45,"session":"Localization & Mapping","title":"TACO: Temporal Consensus Optimization for Continual Neural Mapping","authors":"Xunlan Zhou, Hongrui Zhao, Negar Mehr","authorList":["Xunlan Zhou","Hongrui Zhao","Negar Mehr"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/45/","topics":["SLAM and Localization"]},{"id":46,"session":"Localization & Mapping","title":"Dr-BA: Separable Optimization for Direct Radar Bundle Adjustment & Localization","authors":"Daniil Lisus, Cedric Le Gentil, Timothy Barfoot","authorList":["Daniil Lisus","Cedric Le Gentil","Timothy Barfoot"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/46/","topics":["SLAM and Localization"]},{"id":47,"session":"Localization & Mapping","title":"Efficient Feature-Free Initialization for Monocular Visual-Inertial Systems Using A Feed-Forward 3D Model","authors":"Yuantai Zhang, Jiaqi Yang, Huajian Zeng, Changhao Chen, Haoang Li, Liang Li, Dezhen Song, Xingxing Zuo","authorList":["Yuantai Zhang","Jiaqi Yang","Huajian Zeng","Changhao Chen","Haoang Li","Liang Li","Dezhen Song","Xingxing Zuo"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/47/","topics":["SLAM and Localization","Perception"]},{"id":48,"session":"Localization & Mapping","title":"UP-Fuse: Uncertainty-guided LiDAR-Camera Fusion for 3D Panoptic Segmentation","authors":"Rohit Mohan, Florian Drews, Yakov Miron, Daniele Cattaneo, Abhinav Valada","authorList":["Rohit Mohan","Florian Drews","Yakov Miron","Daniele Cattaneo","Abhinav Valada"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/48/","topics":["SLAM and Localization","Perception","Safety and Robustness"]},{"id":49,"session":"Localization & Mapping","title":"BIEVR-LIO: Robust LiDAR-Inertial Odometry through Bump-Image-Enhanced Voxel Maps","authors":"Patrick Pfreundschuh, Turcan Tuna, Cedric Le Gentil, Roland Siegwart, Cesar Cadena, Helen Oleynikova","authorList":["Patrick Pfreundschuh","Turcan Tuna","Cedric Le Gentil","Roland Siegwart","Cesar Cadena","Helen Oleynikova"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/49/","topics":["SLAM and Localization","Perception","Safety and Robustness"]},{"id":50,"session":"Localization & Mapping","title":"Continuum Robot Localization using Distributed Time-of-Flight Sensors","authors":"Spencer Teetaert, Giammarco Caroleo, Marco Pontin, Sven Lilge, Jessica Burgner-Kahrs, Timothy Barfoot, Perla Maiolino","authorList":["Spencer Teetaert","Giammarco Caroleo","Marco Pontin","Sven Lilge","Jessica Burgner-Kahrs","Timothy Barfoot","Perla Maiolino"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/50/","topics":["SLAM and Localization","Multi-Robot","Soft and Bio-inspired"]},{"id":51,"session":"Localization & Mapping","title":"VGGT-SLAM 2.0: Real-time Dense Feed-forward Scene Reconstruction","authors":"Dominic Rosario Maggio, Luca Carlone","authorList":["Dominic Rosario Maggio","Luca Carlone"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/51/","topics":["SLAM and Localization","Perception"]},{"id":52,"session":"Localization & Mapping","title":"SuperMap: A Spatio-Temporal SLAM System for Visual-Language Navigation","authors":"Shibo Zhao, Guofei Chen, Honghao Zhu, Zhiheng Li, Changwei Yao, Nader Zantout, Seungchan Kim, Wenshan Wang, Ji Zhang, Sebastian Scherer","authorList":["Shibo Zhao","Guofei Chen","Honghao Zhu","Zhiheng Li","Changwei Yao","Nader Zantout","Seungchan Kim","Wenshan Wang","Ji Zhang","Sebastian Scherer"],"authorCount":10,"href":"https://roboticsconference.org/program/papers/52/","topics":["SLAM and Localization","Navigation and Planning","Perception","Language and VLM"]},{"id":53,"session":"Localization & Mapping","title":"Provably Guaranteed Polytopic Uncertainty Quantification for SLAM","authors":"Guangyang Zeng, Yulong Gao, Yuan Shen, Lingpeng Chen, Haoying Li, Guodong Shi, Junfeng Wu","authorList":["Guangyang Zeng","Yulong Gao","Yuan Shen","Lingpeng Chen","Haoying Li","Guodong Shi","Junfeng Wu"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/53/","topics":["SLAM and Localization","Safety and Robustness"]},{"id":54,"session":"Manipulation 2","title":"CoRAL: Contact-Rich Adaptive LLM-based Control for Robotic Manipulation","authors":"Berk Cicek, Mert Kaan Er, Ozgur S. Oguz","authorList":["Berk Cicek","Mert Kaan Er","Ozgur S. Oguz"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/54/","topics":["Manipulation","Control and Dynamics","Language and VLM"]},{"id":55,"session":"Manipulation 2","title":"GHOST: Hierarchical Sub-Goal Policies for Generalizing Robot Manipulation","authors":"Sriram Krishna, Ben Eisner, Haotian Zhan, Ying Yuan, Haoyu Zhen, Chuang Gan, Shubham Tulsiani, David Held","authorList":["Sriram Krishna","Ben Eisner","Haotian Zhan","Ying Yuan","Haoyu Zhen","Chuang Gan","Shubham Tulsiani","David Held"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/55/","topics":["Manipulation"]},{"id":56,"session":"Manipulation 2","title":"Robo3R: Enhancing Robotic Manipulation with Accurate Feed-Forward 3D Reconstruction","authors":"Sizhe Yang, Linning Xu, Hao Li, Juncheng Mu, Jia Zeng, Dahua Lin, Jiangmiao Pang","authorList":["Sizhe Yang","Linning Xu","Hao Li","Juncheng Mu","Jia Zeng","Dahua Lin","Jiangmiao Pang"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/56/","topics":["Manipulation","Perception"]},{"id":57,"session":"Manipulation 2","title":"Semantically Structured Mixture-of-Experts for Compositional Robotic Manipulation","authors":"Chengyu Deng, Guanqi Chen, Chen Yizhou, Zejia Liu, Zhiwen Ruan, Guanhua Chen, Jia Pan","authorList":["Chengyu Deng","Guanqi Chen","Chen Yizhou","Zejia Liu","Zhiwen Ruan","Guanhua Chen","Jia Pan"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/57/","topics":["Manipulation"]},{"id":58,"session":"Manipulation 2","title":"Learning Native Continuation for Action Chunking Flow Policies","authors":"Yufeng Liu, Hang Yu, Juntu Zhao, Bocheng Li, Di Zhang, Mingzhu Li, Wenxuan Wu, Yingdong Hu, Junyuan Xie, Junliang Guo, Dequan Wang, Yang Gao","authorList":["Yufeng Liu","Hang Yu","Juntu Zhao","Bocheng Li","Di Zhang","Mingzhu Li","Wenxuan Wu","Yingdong Hu","Junyuan Xie","Junliang Guo","Dequan Wang","Yang Gao"],"authorCount":12,"href":"https://roboticsconference.org/program/papers/58/","topics":["Manipulation","Learning"]},{"id":59,"session":"Manipulation 2","title":"DexEvolve: Evolutionary Optimization for Robust and Diverse Dexterous Grasp Synthesis","authors":"René Zurbrügg, Andrei Cramariuc, Marco Hutter","authorList":["René Zurbrügg","Andrei Cramariuc","Marco Hutter"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/59/","topics":["Manipulation","Safety and Robustness"]},{"id":60,"session":"Manipulation 2","title":"TACTIC: Tactile and Vision Conditioned Contact-Centric Control for Whole-Arm Manipulation","authors":"Rishabh Madan, Angchen Xie, Samantha Saak, Andres Blanco, Dohyeok Lee, Sarah Grace Brown, Yunting Yan, Mark Zolotas, Jose Barreiros, Tapomayukh Bhattacharjee","authorList":["Rishabh Madan","Angchen Xie","Samantha Saak","Andres Blanco","Dohyeok Lee","Sarah Grace Brown","Yunting Yan","Mark Zolotas","Jose Barreiros","Tapomayukh Bhattacharjee"],"authorCount":10,"href":"https://roboticsconference.org/program/papers/60/","topics":["Manipulation","Perception","Control and Dynamics"]},{"id":61,"session":"Manipulation 2","title":"Distributionally Robust Control via Stein Variational Inference for Contact-rich Manipulation","authors":"Hrishikesh Sathyanarayan, Victor Vantilborgh, Harish Ravichandar, Tom Lefebvre, Ian Abraham","authorList":["Hrishikesh Sathyanarayan","Victor Vantilborgh","Harish Ravichandar","Tom Lefebvre","Ian Abraham"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/61/","topics":["Manipulation","Control and Dynamics","Safety and Robustness"]},{"id":62,"session":"Manipulation 2","title":"PolaRiS: Scalable Real-to-Sim Evaluations for Generalist Robot Policies","authors":"Arhan Jain, Mingtong Zhang, Kanav Arora, William Chen, Marcel Torne, Muhammad Zubair Irshad, Sergey Zakharov, Yue Wang, Sergey Levine, Chelsea Finn, Wei-Chiu Ma, Dhruv Shah, Abhishek Gupta, Karl Pertsch","authorList":["Arhan Jain","Mingtong Zhang","Kanav Arora","William Chen","Marcel Torne","Muhammad Zubair Irshad","Sergey Zakharov","Yue Wang","Sergey Levine","Chelsea Finn","Wei-Chiu Ma","Dhruv Shah","Abhishek Gupta","Karl Pertsch"],"authorCount":14,"href":"https://roboticsconference.org/program/papers/62/","topics":["Manipulation"]},{"id":63,"session":"Navigation 1","title":"MVP-Nav: Multi-layer Value Map Planner Navigator","authors":"Wenyuan Xie, Shaokai Wu, Yijin Zhou, Yanbiao Ji, Guodong Zhang, Bayram Bayramli, Qiuchang Li, Xunchu Zhou, Yue Ding, Hongtao Lu","authorList":["Wenyuan Xie","Shaokai Wu","Yijin Zhou","Yanbiao Ji","Guodong Zhang","Bayram Bayramli","Qiuchang Li","Xunchu Zhou","Yue Ding","Hongtao Lu"],"authorCount":10,"href":"https://roboticsconference.org/program/papers/63/","topics":["Navigation and Planning"]},{"id":64,"session":"Navigation 1","title":"Self-Supervised Bootstrapping of Action-Predictive Embodied Reasoning","authors":"Milan Ganai, Katie Z. Luo, Jonas Frey, Clark Barrett, Marco Pavone","authorList":["Milan Ganai","Katie Z. Luo","Jonas Frey","Clark Barrett","Marco Pavone"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/64/","topics":["Navigation and Planning"]},{"id":65,"session":"Navigation 1","title":"D-Nav: End-to-End Dynamic UAV Navigation with Dual-Resolution Motion Awareness","authors":"Liang Qin, Min Wang, Xingyu Lu, Wengang Zhou, Miao Huang, Guodong Shen, Houqiang Li","authorList":["Liang Qin","Min Wang","Xingyu Lu","Wengang Zhou","Miao Huang","Guodong Shen","Houqiang Li"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/65/","topics":["Navigation and Planning","Aerial and Field Robots"]},{"id":66,"session":"Navigation 1","title":"Learning When to Jump for Off-road Navigation","authors":"Zhipeng Zhao, Taimeng Fu, Shaoshu Su, Qiwei Du, Ehsan Esfahani, Karthik K. Dantu, Souma Chowdhury, Chen Wang","authorList":["Zhipeng Zhao","Taimeng Fu","Shaoshu Su","Qiwei Du","Ehsan Esfahani","Karthik K. Dantu","Souma Chowdhury","Chen Wang"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/66/","topics":["Learning","Navigation and Planning"]},{"id":67,"session":"Navigation 1","title":"OpenFrontier: General Navigation with Visual-Language Grounded Frontiers","authors":"Esteban Padilla Cerdio, Boyang Sun, Marc Pollefeys, Hermann Blum","authorList":["Esteban Padilla Cerdio","Boyang Sun","Marc Pollefeys","Hermann Blum"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/67/","topics":["Navigation and Planning","Perception","Language and VLM"]},{"id":68,"session":"Navigation 1","title":"LongNav-R1: Horizon-Adaptive Multi-Turn RL for Long-Horizon VLA Navigation","authors":"Yue Hu, Avery Xi, Qixin Xiao, Seth Isaacson, Henry X. Liu, Ram Vasudevan, Maani Ghaffari","authorList":["Yue Hu","Avery Xi","Qixin Xiao","Seth Isaacson","Henry X. Liu","Ram Vasudevan","Maani Ghaffari"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/68/","topics":["Navigation and Planning"]},{"id":69,"session":"Navigation 1","title":"SanD-Planner: Sample-Efficient Diffusion Planner in B-Spline Space for Robust Local Navigation","authors":"Jincheng Wang, Lingfan Bao, Tong Yang, Diego Martinez Plasencia, Jianhao Jiao, Dimitrios Kanoulas","authorList":["Jincheng Wang","Lingfan Bao","Tong Yang","Diego Martinez Plasencia","Jianhao Jiao","Dimitrios Kanoulas"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/69/","topics":["Learning","Navigation and Planning","Safety and Robustness"]},{"id":70,"session":"Navigation 1","title":"TravSUITE: Traversability via Self-Supervised, Uncertainty-Aware IRL and Terrain Estimation","authors":"Samuel Triest, Amirreza Shaban, David Fan, Wenshan Wang, Sebastian Scherer","authorList":["Samuel Triest","Amirreza Shaban","David Fan","Wenshan Wang","Sebastian Scherer"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/70/","topics":["Navigation and Planning","Perception","Safety and Robustness"]},{"id":71,"session":"Navigation 1","title":"HumanFlow - Diffusion-Driven MAV Navigation Among Humans via Tightly-Coupled Motion Tracking, Forecasting, and Control","authors":"Simon Schaefer, Joshua Näf, Stefan Leutenegger","authorList":["Simon Schaefer","Joshua Näf","Stefan Leutenegger"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/71/","topics":["Learning","Navigation and Planning","Control and Dynamics","Human-Robot Interaction"]},{"id":72,"session":"Imitation learning 1","title":"Emergence of Human to Robot Transfer in Vision-Language-Action Models","authors":"Simar Kareer, Karl Pertsch, James Darpinian, Judy Hoffman, Danfei Xu, Sergey Levine, Chelsea Finn, Suraj Nair","authorList":["Simar Kareer","Karl Pertsch","James Darpinian","Judy Hoffman","Danfei Xu","Sergey Levine","Chelsea Finn","Suraj Nair"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/72/","topics":["Learning","Perception","Human-Robot Interaction","Language and VLM"]},{"id":73,"session":"Imitation learning 1","title":"PointACT: Vision-Language-Action Models with Multi-Scale Point-Action Interaction","authors":"Shizhe Chen, Paul Pacaud, Cordelia Schmid","authorList":["Shizhe Chen","Paul Pacaud","Cordelia Schmid"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/73/","topics":["Learning","Perception","Language and VLM"]},{"id":74,"session":"Imitation learning 1","title":"Steerable Vision-Language-Action Policies for Embodied Reasoning and Hierarchical Control","authors":"William Chen, Jagdeep Singh Bhatia, Catherine Glossop, Nikhil Mathihalli, Andy Tang, Ria Doshi, Danny Driess, Karl Pertsch, Sergey Levine","authorList":["William Chen","Jagdeep Singh Bhatia","Catherine Glossop","Nikhil Mathihalli","Andy Tang","Ria Doshi","Danny Driess","Karl Pertsch","Sergey Levine"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/74/","topics":["Learning","Perception","Control and Dynamics","Language and VLM"]},{"id":75,"session":"Imitation learning 1","title":"\\textcolorMaroon\\texttt{OAT}\\textcolorMaroon\\texttt{OAT}\\textcolor{Maroon}{\\textbf{\\texttt{OAT}}}: Ordered Action Tokenization","authors":"Chaoqi Liu, Xiaoshen Han, Jiawei Gao, Yue Zhao, Haonan Chen, Yilun Du","authorList":["Chaoqi Liu","Xiaoshen Han","Jiawei Gao","Yue Zhao","Haonan Chen","Yilun Du"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/75/","topics":["Learning"]},{"id":76,"session":"Imitation learning 1","title":"Beyond Binary Success: Sample-Efficient and Statistically Rigorous Robot Policy Comparison","authors":"David Snyder, Apurva Badithela, Nikolai Matni, George J. Pappas, Anirudha Majumdar, Masha Itkina, Haruki Nishimura","authorList":["David Snyder","Apurva Badithela","Nikolai Matni","George J. Pappas","Anirudha Majumdar","Masha Itkina","Haruki Nishimura"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/76/","topics":["Learning"]},{"id":77,"session":"Imitation learning 1","title":"mimic-video: Video-Action Models for Generalizable Robot Control Beyond VLAs","authors":"Jonas Pai, Liam Achenbach, Oliver Sanchez, Stefanos Charalambous, Victoriano Montesinos, Benedek Forrai, Oier Mees, Elvis Nava","authorList":["Jonas Pai","Liam Achenbach","Oliver Sanchez","Stefanos Charalambous","Victoriano Montesinos","Benedek Forrai","Oier Mees","Elvis Nava"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/77/","topics":["Learning","Control and Dynamics"]},{"id":78,"session":"Imitation learning 1","title":"TouchGuide: Inference-Time Steering of Visuomotor Policies via Touch Guidance","authors":"Zhemeng Zhang, Jiahua Ma, Xincheng Yang, Xin Wen, Yuzhi Zhang, Boyan Li, Yiran Qin, Jin Liu, Canzhao, Li Kang, Haoqin Hong, Zhenfei Yin, Philip Torr, Hao Su, Ruimao Zhang, Daolin Ma","authorList":["Zhemeng Zhang","Jiahua Ma","Xincheng Yang","Xin Wen","Yuzhi Zhang","Boyan Li","Yiran Qin","Jin Liu","Canzhao","Li Kang","Haoqin Hong","Zhenfei Yin","Philip Torr","Hao Su","Ruimao Zhang","Daolin Ma"],"authorCount":16,"href":"https://roboticsconference.org/program/papers/78/","topics":["Learning"]},{"id":79,"session":"Imitation learning 1","title":"Visual Verification Enables Inference-time Steering and Autonomous Policy Improvement","authors":"Mingtong Zhang, Dhruv Shah","authorList":["Mingtong Zhang","Dhruv Shah"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/79/","topics":["Learning","Perception","Safety and Robustness"]},{"id":80,"session":"Imitation learning 1","title":"Set-Supervised Diffusion Policy: Learning Action-Chunking Diffusion through Corrections","authors":"Zhaoting Li, Gang Chen, Javier Alonso-Mora, Cosimo Della Santina, Jens Kober","authorList":["Zhaoting Li","Gang Chen","Javier Alonso-Mora","Cosimo Della Santina","Jens Kober"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/80/","topics":["Learning"]},{"id":81,"session":"VLA Models","title":"X-DiffVLA: X-Embodied Diffusion Action Heads for Vision-Language-Action Models","authors":"Boyu Li, Chaoyi Xu, Haoqi Yuan, Xinrun Xu, Börje F. Karlsson, Dongbin Zhao, Haoran Li, Zongqing Lu","authorList":["Boyu Li","Chaoyi Xu","Haoqi Yuan","Xinrun Xu","Börje F. Karlsson","Dongbin Zhao","Haoran Li","Zongqing Lu"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/81/","topics":["Learning","Perception","Language and VLM"]},{"id":82,"session":"VLA Models","title":"SkillVLA: Tackling Combinatorial Diversity in Dual-Arm Manipulation via Skill Reuse","authors":"Xuanran Zhai, Zekai Huang, Longyan Wu, Qianyou Zhao, Qiaojun Yu, Jieji Ren, Ce Hao, Harold Soh","authorList":["Xuanran Zhai","Zekai Huang","Longyan Wu","Qianyou Zhao","Qiaojun Yu","Jieji Ren","Ce Hao","Harold Soh"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/82/","topics":["Manipulation","Learning"]},{"id":83,"session":"VLA Models","title":"BagelVLA: Enhancing Long-Horizon Manipulation via Interleaved Vision-Language-Action Generation","authors":"Yucheng Hu, Jianke Zhang, Yuanfei Luo, Yanjiang Guo, Xiaoyu Chen, Sun Xinshu, Kun Feng, Qingzhou Lu, Sheng Chen, Yangang Zhang, Wei Li, Jianyu Chen","authorList":["Yucheng Hu","Jianke Zhang","Yuanfei Luo","Yanjiang Guo","Xiaoyu Chen","Sun Xinshu","Kun Feng","Qingzhou Lu","Sheng Chen","Yangang Zhang","Wei Li","Jianyu Chen"],"authorCount":12,"href":"https://roboticsconference.org/program/papers/83/","topics":["Manipulation","Perception","Language and VLM"]},{"id":84,"session":"VLA Models","title":"GuidedVLA: Specifying Task-Relevant Factors via Plug-and-Play Action Attention Specialization","authors":"Xiaosong Jia, Bowen Yang, Zuhao Ge, Xian Nie, Yuchen Zhou, Cunxin Fan, Yufeng Li, Yilin Chai, Chao Jing, Zijian Liang, Qingwen Bu, Haidong Cao, Chao Wu, Qifeng Li, Zhenjie Yang, Chenhe Zhang, Hongyang Li, Zuxuan Wu, Junchi Yan, Yu-Gang Jiang","authorList":["Xiaosong Jia","Bowen Yang","Zuhao Ge","Xian Nie","Yuchen Zhou","Cunxin Fan","Yufeng Li","Yilin Chai","Chao Jing","Zijian Liang","Qingwen Bu","Haidong Cao","Chao Wu","Qifeng Li","Zhenjie Yang","Chenhe Zhang","Hongyang Li","Zuxuan Wu","Junchi Yan","Yu-Gang Jiang"],"authorCount":20,"href":"https://roboticsconference.org/program/papers/84/","topics":["Other"]},{"id":85,"session":"VLA Models","title":"AR-VLA: Autoregressive Action Expert for Vision–Language–Action Models","authors":"Yutong Hu, Jan-Nico Zaech, Nikolay Nikolov, Yuanqi Yao, Sombit Dey, Giuliano Albanese, Renaud Detry, Luc Van Gool, Danda Pani Paudel","authorList":["Yutong Hu","Jan-Nico Zaech","Nikolay Nikolov","Yuanqi Yao","Sombit Dey","Giuliano Albanese","Renaud Detry","Luc Van Gool","Danda Pani Paudel"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/85/","topics":["Perception","Language and VLM"]},{"id":86,"session":"VLA Models","title":"Towards Long-Lived Robots: Continual Learning VLA Models via Reinforcement Fine-Tuning","authors":"Yuan Liu, Haoran Li, Shuai Tian, Yuxing Qin, Yuhui Chen, Yupeng Zheng, Yongzhen Huang, Dongbin Zhao","authorList":["Yuan Liu","Haoran Li","Shuai Tian","Yuxing Qin","Yuhui Chen","Yupeng Zheng","Yongzhen Huang","Dongbin Zhao"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/86/","topics":["Learning"]},{"id":87,"session":"VLA Models","title":"π∗0.6π0.6∗\\pi^{*}_{0.6}: a VLA That Learns From Experience","authors":"Ali Amin, Raichelle Aniceto, Ashwin Balakrishna, Kevin Black, Ken Conley, Grace B. Connors, James Darpinian, Karan Dhabalia, Jared Di Carlo, Danny Driess, Michael Robert Equi, Adnan Esmail, Yunhao Fang, Chelsea Finn, Catherine Glossop, Thomas Godden, Ivan Goryachev, Lachy Groom, Hunter Hancock, Karol Hausman, Gashon Hussein, Brian Ichter, Szymon Jakubczak, Rowan Jen, Tim Jones, Benjamin Katz, Liyiming Ke, Chandra Kuchi, Marinda Lamb, Devin Leblanc, Sergey Levine, Adrian Li-Bell, Yao Lu, Vishnu Mano, Mohith Mothukuri, Suraj Nair, Karl Pertsch, Allen Z. Ren, Charvi Sharma, Lucy Xiaoyang Shi, Laura Smith, Jost Tobias Springenberg, Kyle Stachowicz, Will Stoeckle, Alexander Swerdlow, James Tanner, Marcel Torne, Quan Vuong, Anna Walling, Haohuan Wang, Blake Williams, Sukwon Yoo, Lili Yu, Ury Zhilinsky, Zhiyuan Zhou","authorList":["Ali Amin","Raichelle Aniceto","Ashwin Balakrishna","Kevin Black","Ken Conley","Grace B. Connors","James Darpinian","Karan Dhabalia","Jared Di Carlo","Danny Driess","Michael Robert Equi","Adnan Esmail","Yunhao Fang","Chelsea Finn","Catherine Glossop","Thomas Godden","Ivan Goryachev","Lachy Groom","Hunter Hancock","Karol Hausman","Gashon Hussein","Brian Ichter","Szymon Jakubczak","Rowan Jen","Tim Jones","Benjamin Katz","Liyiming Ke","Chandra Kuchi","Marinda Lamb","Devin Leblanc","Sergey Levine","Adrian Li-Bell","Yao Lu","Vishnu Mano","Mohith Mothukuri","Suraj Nair","Karl Pertsch","Allen Z. Ren","Charvi Sharma","Lucy Xiaoyang Shi","Laura Smith","Jost Tobias Springenberg","Kyle Stachowicz","Will Stoeckle","Alexander Swerdlow","James Tanner","Marcel Torne","Quan Vuong","Anna Walling","Haohuan Wang","Blake Williams","Sukwon Yoo","Lili Yu","Ury Zhilinsky","Zhiyuan Zhou"],"authorCount":55,"href":"https://roboticsconference.org/program/papers/87/","topics":["Learning"]},{"id":88,"session":"VLA Models","title":"StereoVLA: Enhancing Vision-Language-Action Models with Stereo Vision","authors":"Shengliang Deng, Mi Yan, Yixin Zheng, Jiayi Su, Wenhao Zhang, Xiaoguang Zhao, Heming Cui, Zhizheng Zhang, He Wang","authorList":["Shengliang Deng","Mi Yan","Yixin Zheng","Jiayi Su","Wenhao Zhang","Xiaoguang Zhao","Heming Cui","Zhizheng Zhang","He Wang"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/88/","topics":["Perception","Language and VLM"]},{"id":89,"session":"VLA Models","title":"RLux-VLA: A Unified and Efficient Framework for Reinforcement Learning of Vision-Language-Action Models","authors":"Hongzhi Zang, Mingjie Wei, Si Xu, Yongji Wu, Zhen Guo, Yuanqing Wang, Hao Lin, Peihong Wang, Hua Yuan, Yixian Zhang, Liangzhi Shi, Yuqing Xie, Zhexuan Xu, Zhihao Liu, Kang Chen, Wenhao Tang, Quanlu Zhang, Weinan Zhang, Chao Yu, Yu Wang","authorList":["Hongzhi Zang","Mingjie Wei","Si Xu","Yongji Wu","Zhen Guo","Yuanqing Wang","Hao Lin","Peihong Wang","Hua Yuan","Yixian Zhang","Liangzhi Shi","Yuqing Xie","Zhexuan Xu","Zhihao Liu","Kang Chen","Wenhao Tang","Quanlu Zhang","Weinan Zhang","Chao Yu","Yu Wang"],"authorCount":20,"href":"https://roboticsconference.org/program/papers/89/","topics":["Learning","Perception","Language and VLM"]},{"id":90,"session":"Datasets and Benchmarks","title":"Betting for Sim-to-Real Performance Evaluation","authors":"Yujia Chen, Zaid Mahboob, Bowen Weng","authorList":["Yujia Chen","Zaid Mahboob","Bowen Weng"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/90/","topics":["Learning","Simulation and Digital Twins"]},{"id":91,"session":"Datasets and Benchmarks","title":"MolmoSpaces: Large-Scale Open Ecosystem for Robot Manipulation and Navigation","authors":"Yejin Kim, Wilbert Pumacay, Omar Rayyan, Max Argus, Winson Han, Eli Vanderbilt, Jordi Salvador, Abhay Deshpande, Rose Hendrix, Snehal Jauhri, Shuo Liu, Nur Muhammad Mahi Shafiullah, Maya Guru, Ainaz Eftekhar, Karen Farley, Donovan Clay, Jiafei Duan, Arjun Guru, Piper Wolters, Alvaro Herrasti, Ying-Chun Lee, Georgia Chalvatzaki, Yuchen Cui, Ali Farhadi, Dieter Fox, Ranjay Krishna","authorList":["Yejin Kim","Wilbert Pumacay","Omar Rayyan","Max Argus","Winson Han","Eli Vanderbilt","Jordi Salvador","Abhay Deshpande","Rose Hendrix","Snehal Jauhri","Shuo Liu","Nur Muhammad Mahi Shafiullah","Maya Guru","Ainaz Eftekhar","Karen Farley","Donovan Clay","Jiafei Duan","Arjun Guru","Piper Wolters","Alvaro Herrasti","Ying-Chun Lee","Georgia Chalvatzaki","Yuchen Cui","Ali Farhadi","Dieter Fox","Ranjay Krishna"],"authorCount":26,"href":"https://roboticsconference.org/program/papers/91/","topics":["Manipulation","Learning","Navigation and Planning","Simulation and Digital Twins"]},{"id":92,"session":"Datasets and Benchmarks","title":"EgoVerse: An Egocentric Human Dataset for Robot Learning from Around the World","authors":"Ryan Punamiya, Simar Kareer, Zeyi Liu, Joshua Citron, Ri-Zhao Qiu, Xiongyi Cai, Alexey Gavryushin, Jiaqi Chen, Davide Liconti, Lawrence Y. Zhu, Patcharapong Aphiwetsa, Baoyu Li, Aniketh Cheluva, Pranav Kuppili, Yangcen Liu, Dhruv Patel, Aidan Gao, Ryan Co, Hye-Young Chung, Renee Zbizika, Jinyun Liu, Xiaomeng Xu, Haoyu Xiong, Geng Chen, Sebastiano Oliani, Wenkai Xuan, Chenyu Yang, Xi Wang, James Fort, Richard Newcombe, Josh Gao, Jason Chong, Garrett Matsuda, Aseem Doriwala, Robert K. Katzschmann, Marc Pollefeys, Xiaolong Wang, Shuran Song, Judy Hoffman, Danfei Xu","authorList":["Ryan Punamiya","Simar Kareer","Zeyi Liu","Joshua Citron","Ri-Zhao Qiu","Xiongyi Cai","Alexey Gavryushin","Jiaqi Chen","Davide Liconti","Lawrence Y. Zhu","Patcharapong Aphiwetsa","Baoyu Li","Aniketh Cheluva","Pranav Kuppili","Yangcen Liu","Dhruv Patel","Aidan Gao","Ryan Co","Hye-Young Chung","Renee Zbizika","Jinyun Liu","Xiaomeng Xu","Haoyu Xiong","Geng Chen","Sebastiano Oliani","Wenkai Xuan","Chenyu Yang","Xi Wang","James Fort","Richard Newcombe","Josh Gao","Jason Chong","Garrett Matsuda","Aseem Doriwala","Robert K. Katzschmann","Marc Pollefeys","Xiaolong Wang","Shuran Song","Judy Hoffman","Danfei Xu"],"authorCount":40,"href":"https://roboticsconference.org/program/papers/92/","topics":["Learning","Human-Robot Interaction","Simulation and Digital Twins"]},{"id":93,"session":"Datasets and Benchmarks","title":"GS-Playground: A High-Throughput Photorealistic Simulator for Vision-Informed Robot Learning","authors":"Yufei Jia, Heng Zhang, Ziheng Zhang, Lei Han, Junzhe Wu, Mingrui Yu, Zifan Wang, Dixuan Jiang, Zheng Li, Chenyu Cao, Zhuoyuan Yu, Xun Yang, Haizhou Ge, Yuchi Zhang, Jiayuan Zhang, Zhenbiao Huang, Tianle Liu, Shenyu Chen, Jiacheng Wang, Bin Xie, Xuran Yao, Xiwa Deng, Guangyu Wang, Jinzhi Zhang, Lei Hao, Zhixing Chen, Yuxiang Chen, Anqi Wang, Hongyun Tian, Yiyi Yan, Zhanxiang Cao, Yizhou Jiang, Hanyang Shao, Yue Li, Lu Shi, Bokui Chen, Wei Sui, Hanqing Cui, Yusen Qin, Tiancai Wang, Ruqi Huang, Guyue Zhou","authorList":["Yufei Jia","Heng Zhang","Ziheng Zhang","Lei Han","Junzhe Wu","Mingrui Yu","Zifan Wang","Dixuan Jiang","Zheng Li","Chenyu Cao","Zhuoyuan Yu","Xun Yang","Haizhou Ge","Yuchi Zhang","Jiayuan Zhang","Zhenbiao Huang","Tianle Liu","Shenyu Chen","Jiacheng Wang","Bin Xie","Xuran Yao","Xiwa Deng","Guangyu Wang","Jinzhi Zhang","Lei Hao","Zhixing Chen","Yuxiang Chen","Anqi Wang","Hongyun Tian","Yiyi Yan","Zhanxiang Cao","Yizhou Jiang","Hanyang Shao","Yue Li","Lu Shi","Bokui Chen","Wei Sui","Hanqing Cui","Yusen Qin","Tiancai Wang","Ruqi Huang","Guyue Zhou"],"authorCount":42,"href":"https://roboticsconference.org/program/papers/93/","topics":["Learning","Perception","Simulation and Digital Twins"]},{"id":94,"session":"Datasets and Benchmarks","title":"High Fidelity Capture, Reconstruction, and Transfer of Human Demonstrations for Robot-Assisted Bathing","authors":"Arjun Lakshmipathy, Jonathan P. King, Ethan Zuo, Rohit Satishkumar, Hongyi Chen, Jeffrey Ichnowski, Dan Ding, Zackory Erickson, Nancy S. Pollard","authorList":["Arjun Lakshmipathy","Jonathan P. King","Ethan Zuo","Rohit Satishkumar","Hongyi Chen","Jeffrey Ichnowski","Dan Ding","Zackory Erickson","Nancy S. Pollard"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/94/","topics":["Learning","Perception","Human-Robot Interaction","Simulation and Digital Twins"]},{"id":95,"session":"Datasets and Benchmarks","title":"RoboVista: Evaluating Vision Language Models for Diverse Robot Applications","authors":"Shuangyu Xie, Kaiyuan Chen, Ziyang Chen, Simeon Adebola, Yixuan Huang, Zehan Ma, Tianshuang Qiu, Wentao Yuan, Dhruv Shah, Pannag R. Sanketi, Ken Goldberg","authorList":["Shuangyu Xie","Kaiyuan Chen","Ziyang Chen","Simeon Adebola","Yixuan Huang","Zehan Ma","Tianshuang Qiu","Wentao Yuan","Dhruv Shah","Pannag R. Sanketi","Ken Goldberg"],"authorCount":11,"href":"https://roboticsconference.org/program/papers/95/","topics":["Learning","Perception","Language and VLM","Simulation and Digital Twins"]},{"id":96,"session":"Datasets and Benchmarks","title":"RoboLab: A High-Fidelity Simulation Benchmark for Analysis of Task Generalist Policies","authors":"Xuning Yang, Rishit Dagli, Alex Zook, Hugo Hadfield, Ankit Goyal, Stan Birchfield, Fabio Ramos, Jonathan Tremblay","authorList":["Xuning Yang","Rishit Dagli","Alex Zook","Hugo Hadfield","Ankit Goyal","Stan Birchfield","Fabio Ramos","Jonathan Tremblay"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/96/","topics":["Learning","Simulation and Digital Twins"]},{"id":97,"session":"Datasets and Benchmarks","title":"LIBERO-X: Robustness Litmus for Vision-Language-Action Models","authors":"Guodong Wang, Chenkai Zhang, Qingjie Liu, Jinjin Zhang, Jiancheng Cai, Junjie Liu, Xinmin Liu","authorList":["Guodong Wang","Chenkai Zhang","Qingjie Liu","Jinjin Zhang","Jiancheng Cai","Junjie Liu","Xinmin Liu"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/97/","topics":["Learning","Perception","Language and VLM","Simulation and Digital Twins","Safety and Robustness"]},{"id":98,"session":"Datasets and Benchmarks","title":"OopsieVerse: A Safety Benchmark with Damage-Aware Simulation for Robot Manipulation","authors":"Arnav Balaji, Arpit Bahety, Sriniket Ambatipudi, Daniel Lam, Junhong Xu, Roberto Martín-Martín","authorList":["Arnav Balaji","Arpit Bahety","Sriniket Ambatipudi","Daniel Lam","Junhong Xu","Roberto Martín-Martín"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/98/","topics":["Manipulation","Learning","Simulation and Digital Twins","Safety and Robustness"]},{"id":99,"session":"Control & Dynamics","title":"FlashSAC: Fast and Stable Off-Policy Reinforcement Learning for High-Dimensional Robot Control","authors":"Donghu Kim, Youngdo Lee, Minho Park, Kinam Kim, Takuma Seno, I. Made Aswin Nahrendra, Sehee Min, Daniel Palenicek, Florian Vogt, Danica Kragic, Jan Peters, Jaegul Choo, Hojoon Lee","authorList":["Donghu Kim","Youngdo Lee","Minho Park","Kinam Kim","Takuma Seno","I. Made Aswin Nahrendra","Sehee Min","Daniel Palenicek","Florian Vogt","Danica Kragic","Jan Peters","Jaegul Choo","Hojoon Lee"],"authorCount":13,"href":"https://roboticsconference.org/program/papers/99/","topics":["Learning","Control and Dynamics"]},{"id":100,"session":"Control & Dynamics","title":"Realizing Robotic Swimming with Unified Fluid-Robot Multiphysics","authors":"Jeong Hun Lee, Junzhe Hu, Sofia Kwok, Carmel Majidi, Zac Manchester","authorList":["Jeong Hun Lee","Junzhe Hu","Sofia Kwok","Carmel Majidi","Zac Manchester"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/100/","topics":["Control and Dynamics"]},{"id":101,"session":"Control & Dynamics","title":"Grounding Discrete-Time Joint-Level Acceleration Bounds in Voltage-Constrained Actuation","authors":"Lingwei Zhang, Jiaming Wang, Tianlin Zhang, Zhitao Song, Xuanqi Zeng, Weipeng Xia, Zhongyu Li, Yunhui Liu","authorList":["Lingwei Zhang","Jiaming Wang","Tianlin Zhang","Zhitao Song","Xuanqi Zeng","Weipeng Xia","Zhongyu Li","Yunhui Liu"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/101/","topics":["Control and Dynamics"]},{"id":102,"session":"Control & Dynamics","title":"cuNRTO: GPU-Accelerated Nonlinear Robust Trajectory Optimization","authors":"Jiawei Wang, Arshiya Taj Abdul, Evangelos Theodorou","authorList":["Jiawei Wang","Arshiya Taj Abdul","Evangelos Theodorou"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/102/","topics":["Navigation and Planning","Control and Dynamics","Safety and Robustness"]},{"id":103,"session":"Control & Dynamics","title":"Safe Large-Scale Robust Nonlinear MPC in Milliseconds via Reachability-Constrained System Level Synthesis on the GPU","authors":"Jeffrey Fang, Glen Chou","authorList":["Jeffrey Fang","Glen Chou"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/103/","topics":["Control and Dynamics","Safety and Robustness"]},{"id":104,"session":"Control & Dynamics","title":"Bellman Value Decomposition for Task Logic in Safe Optimal Control","authors":"William Sharpless, Oswin So, Dylan Hirsch, Sylvia Lee Herbert, Chuchu Fan","authorList":["William Sharpless","Oswin So","Dylan Hirsch","Sylvia Lee Herbert","Chuchu Fan"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/104/","topics":["Control and Dynamics","Safety and Robustness"]},{"id":105,"session":"Control & Dynamics","title":"asRoBallet: Closing the Sim2Real Gap via Friction-Aware Reinforcement Learning for Underactuated Spherical Dynamics","authors":"Fang Wan, Guangyi Huang, Tianyu Wu, Zishang Zhang, Bangchao Huang, Haoran Sun, Mingdong Chen, Chaoyang Song","authorList":["Fang Wan","Guangyi Huang","Tianyu Wu","Zishang Zhang","Bangchao Huang","Haoran Sun","Mingdong Chen","Chaoyang Song"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/105/","topics":["Learning","Control and Dynamics","Simulation and Digital Twins"]},{"id":106,"session":"Control & Dynamics","title":"Stabilizing 3D Continuum-Arm Rollouts via Equilibrium Anchoring and Feature-Lifted Residual Learning","authors":"Ahsan Tanveer, Rahdar Hussain Afridi, Waqar Hussain Afridi, Feitian Zhang, Guangming Xie","authorList":["Ahsan Tanveer","Rahdar Hussain Afridi","Waqar Hussain Afridi","Feitian Zhang","Guangming Xie"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/106/","topics":["Learning","Perception","Control and Dynamics","Soft and Bio-inspired"]},{"id":107,"session":"Control & Dynamics","title":"Learning-Based Adaptive Control for Surgical Robotic Exposure Task on Deformable Tissues","authors":"Jiayi Liu, Kaiqi Wei, Yiwei Wang, Huan Zhao, Han Ding","authorList":["Jiayi Liu","Kaiqi Wei","Yiwei Wang","Huan Zhao","Han Ding"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/107/","topics":["Learning","Control and Dynamics","Medical and Surgical"]},{"id":108,"session":"Control & Dynamics","title":"Variance-Reduced Model Predictive Path Integral via Quadratic Model Approximation","authors":"Fabian Schramm, Franki Nguimatsia-Tiofack, Nicolas Perrin-Gilbert, Marc Toussaint, Justin Carpentier","authorList":["Fabian Schramm","Franki Nguimatsia-Tiofack","Nicolas Perrin-Gilbert","Marc Toussaint","Justin Carpentier"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/108/","topics":["Control and Dynamics"]},{"id":109,"session":"Control & Dynamics","title":"Tempered Sequential Monte Carlo for Trajectory and Policy Optimization with Differentiable Dynamics","authors":"Heng Yang","authorList":["Heng Yang"],"authorCount":1,"href":"https://roboticsconference.org/program/papers/109/","topics":["Learning","Navigation and Planning","Control and Dynamics"]},{"id":110,"session":"Control & Dynamics","title":"TinySDP: Real Time Semidefinite Optimization for Certifiable and Agile Edge Robotics","authors":"Ishaan Mahajan, Jon Arrizabalaga, Andrea Grillo, Fausto Vega, Zac Manchester, James Anderson, Brian Plancher","authorList":["Ishaan Mahajan","Jon Arrizabalaga","Andrea Grillo","Fausto Vega","Zac Manchester","James Anderson","Brian Plancher"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/110/","topics":["Control and Dynamics"]},{"id":111,"session":"Control & Dynamics","title":"High Precision Hydraulic Excavator Control for Heavy Duty Grading","authors":"Lennart Werner, Pol Eyschen, Sean Costello, Andrei Cramariuc, Marco Hutter","authorList":["Lennart Werner","Pol Eyschen","Sean Costello","Andrei Cramariuc","Marco Hutter"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/111/","topics":["Control and Dynamics"]},{"id":112,"session":"HRI","title":"Automated Synthesis of Facial Mechanisms for Conversational Animatronic Robots","authors":"Zongzheng Zhang, Zi Lin, Jiawen Yang, Ziqiao Peng, Junyan Lao, Lin Cheng, Huazhe Xu, Hang Zhao, Hao Zhao","authorList":["Zongzheng Zhang","Zi Lin","Jiawen Yang","Ziqiao Peng","Junyan Lao","Lin Cheng","Huazhe Xu","Hang Zhao","Hao Zhao"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/112/","topics":["Human-Robot Interaction"]},{"id":113,"session":"HRI","title":"Social Human Robot Embodied Conversation (SHREC) Dataset: Benchmarking Foundational Models’ Social Reasoning","authors":"Dong Won Lee, Yubin Kim, Sooyeon Jeong, Denison Guvenoz, Parker Malachowsky, Louis-Philippe Morency, Cynthia Breazeal, Hae Won Park","authorList":["Dong Won Lee","Yubin Kim","Sooyeon Jeong","Denison Guvenoz","Parker Malachowsky","Louis-Philippe Morency","Cynthia Breazeal","Hae Won Park"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/113/","topics":["Learning","Human-Robot Interaction","Simulation and Digital Twins"]},{"id":114,"session":"HRI","title":"CANINE: Coaching Visually Impaired Users for Interactive Navigation with a Robot Guide Dog","authors":"Cunjun Yu, Zishuo Wang, Anxing Xiao, Linfeng Li, David Hsu","authorList":["Cunjun Yu","Zishuo Wang","Anxing Xiao","Linfeng Li","David Hsu"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/114/","topics":["Navigation and Planning","Perception","Human-Robot Interaction"]},{"id":115,"session":"HRI","title":"QuickLAP: Quick Language–Action Preference Learning for Autonomous Driving Agents","authors":"Jordan Abi Nader, David Lee, Nathaniel S. Dennler, Andreea Bobu","authorList":["Jordan Abi Nader","David Lee","Nathaniel S. Dennler","Andreea Bobu"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/115/","topics":["Learning","Human-Robot Interaction","Language and VLM"]},{"id":116,"session":"HRI","title":"Robots That Know What to Ask: Recovering Misaligned Rewards through Targeted Explanations","authors":"Helena Merker, Nick Walker, Andreea Bobu","authorList":["Helena Merker","Nick Walker","Andreea Bobu"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/116/","topics":["Human-Robot Interaction"]},{"id":117,"session":"HRI","title":"Embodiment Meets Environment: Toward Context-Aware, Safe Physical Caregiving Robots","authors":"Zhanxin Wu, Ruofei Tong, Jiaying Fang, Tapomayukh Bhattacharjee","authorList":["Zhanxin Wu","Ruofei Tong","Jiaying Fang","Tapomayukh Bhattacharjee"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/117/","topics":["Human-Robot Interaction","Safety and Robustness"]},{"id":118,"session":"HRI","title":"Beyond Failure Recovery: An Engagement-Aware Human-in-the-loop Framework for Robotic Systems","authors":"Jiaying Fang, Joyce Yang, Zhanxin Wu, Bohan Yang, Tapomayukh Bhattacharjee","authorList":["Jiaying Fang","Joyce Yang","Zhanxin Wu","Bohan Yang","Tapomayukh Bhattacharjee"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/118/","topics":["Human-Robot Interaction"]},{"id":119,"session":"HRI","title":"Knowing When Not to Help: Active Estimation of Human Reachability for Just-Right Robot Assistance","authors":"Ziang Liu, Yunting Yan, Christy Sum Yu Cheung, Tailai Ying, Bodong Liu, Shiqin Tong, Alexander Orkwis, Katherine Dimitropoulou, Tapomayukh Bhattacharjee","authorList":["Ziang Liu","Yunting Yan","Christy Sum Yu Cheung","Tailai Ying","Bodong Liu","Shiqin Tong","Alexander Orkwis","Katherine Dimitropoulou","Tapomayukh Bhattacharjee"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/119/","topics":["Perception","Human-Robot Interaction"]},{"id":120,"session":"HRI","title":"A Minimal, Deterministic Approach to Shared Control for Safe Powered Wheelchair Driving","authors":"Larisa Y.c. Loke, Joel Goh, Kyle Puckett, Michelle Zhang, Nicole L. Zaino, Brenna Argall","authorList":["Larisa Y.c. Loke","Joel Goh","Kyle Puckett","Michelle Zhang","Nicole L. Zaino","Brenna Argall"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/120/","topics":["Control and Dynamics","Human-Robot Interaction","Safety and Robustness"]},{"id":121,"session":"Manipulation 3","title":"R2RGen: Real-to-Real 3D Data Generation for Spatially-generalized Robotic Manipulation","authors":"Xiuwei Xu, Angyuan Ma, Hankun Li, Bingyao Yu, Zheng Zhu, Jie Zhou, Jiwen Lu","authorList":["Xiuwei Xu","Angyuan Ma","Hankun Li","Bingyao Yu","Zheng Zhu","Jie Zhou","Jiwen Lu"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/121/","topics":["Manipulation","Learning","Perception"]},{"id":122,"session":"Manipulation 3","title":"DexGrasp-Zero: A Morphology-Aligned Policy for Zero-Shot Cross-Embodiment Dexterous Grasping","authors":"Yuliang Wu, Yanhan Lin, Wengkit Lao, Yuhao Lin, Yi-Lin Wei, Wei-Shi Zheng, Ancong Wu","authorList":["Yuliang Wu","Yanhan Lin","Wengkit Lao","Yuhao Lin","Yi-Lin Wei","Wei-Shi Zheng","Ancong Wu"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/122/","topics":["Manipulation","Learning"]},{"id":123,"session":"Manipulation 3","title":"Minimalist Compliance Control","authors":"Haochen Shi, Songbo Hu, Yifan Hou, Weizhuo Wang, Karen Liu, Shuran Song","authorList":["Haochen Shi","Songbo Hu","Yifan Hou","Weizhuo Wang","Karen Liu","Shuran Song"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/123/","topics":["Manipulation","Control and Dynamics"]},{"id":124,"session":"Manipulation 3","title":"One Hand to Rule Them All: Canonical Representations for Unified Dexterous Manipulation","authors":"Zhenyu Wei, Yunchao Yao, Mingyu Ding","authorList":["Zhenyu Wei","Yunchao Yao","Mingyu Ding"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/124/","topics":["Manipulation"]},{"id":125,"session":"Manipulation 3","title":"AxisGuide: Grounding Robot Action Coordinate System in RGB Observations for Robust Visuomotor Manipulation","authors":"Jiyun Jang, Yujin Sung, Woosung Joung, Daewon Chae, Sangwon Lee, Sohwi Kim, Jinkyu Kim, Jungbeom Lee","authorList":["Jiyun Jang","Yujin Sung","Woosung Joung","Daewon Chae","Sangwon Lee","Sohwi Kim","Jinkyu Kim","Jungbeom Lee"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/125/","topics":["Manipulation","Safety and Robustness"]},{"id":126,"session":"Manipulation 3","title":"Learning Deformable Object Manipulation Using Task-Level Iterative Learning Control","authors":"Krishna Suresh, Christopher G. Atkeson","authorList":["Krishna Suresh","Christopher G. Atkeson"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/126/","topics":["Manipulation","Learning","Control and Dynamics"]},{"id":127,"session":"Manipulation 3","title":"CLAMP: Contrastive Learning for 3D Multi-View Action-Conditioned Robotic Manipulation Pretraining","authors":"I.-Chun Arthur Liu, Krzysztof Marcin Choromanski, Sandy Huang, Connor Schenck","authorList":["I.-Chun Arthur Liu","Krzysztof Marcin Choromanski","Sandy Huang","Connor Schenck"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/127/","topics":["Manipulation","Learning","Perception"]},{"id":128,"session":"Manipulation 3","title":"Force Policy: Learning Hybrid Force-Position Control Policy under Interaction Frame for Contact-Rich Manipulation","authors":"Hongjie Fang, Shirun Tang, Mingyu Mei, Haoxiang Qin, Zihao He, Jingjing Chen, Feng Ying, Chenxi Wang, Wanxi Liu, Zaixing He, Cewu Lu, Shiquan Wang","authorList":["Hongjie Fang","Shirun Tang","Mingyu Mei","Haoxiang Qin","Zihao He","Jingjing Chen","Feng Ying","Chenxi Wang","Wanxi Liu","Zaixing He","Cewu Lu","Shiquan Wang"],"authorCount":12,"href":"https://roboticsconference.org/program/papers/128/","topics":["Manipulation","Learning","Control and Dynamics"]},{"id":129,"session":"Manipulation 3","title":"ViTacFormer: Learning Cross-Modal Representation for Visuo-Tactile Dexterous Manipulation","authors":"Liang Heng, Haoran Geng, Kaifeng Zhang, Pieter Abbeel, Jitendra Malik","authorList":["Liang Heng","Haoran Geng","Kaifeng Zhang","Pieter Abbeel","Jitendra Malik"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/129/","topics":["Manipulation","Learning"]},{"id":130,"session":"Navigation 2","title":"Galilean State Estimation for Inertial Navigation Systems with Unknown Time Delay","authors":"Giulio Delama, Martin Scheiber, Yixiao Ge, Tarek Hamel, Stephan Weiss, Robert Mahony","authorList":["Giulio Delama","Martin Scheiber","Yixiao Ge","Tarek Hamel","Stephan Weiss","Robert Mahony"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/130/","topics":["Navigation and Planning","Perception"]},{"id":131,"session":"Navigation 2","title":"Learning to Localize Reference Trajectories in Image-Space for Visual Navigation","authors":"Finn Lukas Busch, Matti Vahs, Quantao Yang, Jesús Gerardo Ortega Peimbert, Yixi Cai, Jana Tumova, Olov Andersson","authorList":["Finn Lukas Busch","Matti Vahs","Quantao Yang","Jesús Gerardo Ortega Peimbert","Yixi Cai","Jana Tumova","Olov Andersson"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/131/","topics":["Learning","SLAM and Localization","Navigation and Planning","Perception"]},{"id":132,"session":"Navigation 2","title":"Beyond Isolation: A Unified Benchmark for General-Purpose Navigation","authors":"Seson Sun, Tianyi Yang, Tengyue Wang, Yikai Xue, Zhengjie Xu, Lingming Zhang, Qichen Zhang, Chao.liang, Zhipeng Zhang","authorList":["Seson Sun","Tianyi Yang","Tengyue Wang","Yikai Xue","Zhengjie Xu","Lingming Zhang","Qichen Zhang","Chao.liang","Zhipeng Zhang"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/132/","topics":["Navigation and Planning","Simulation and Digital Twins"]},{"id":133,"session":"Navigation 2","title":"Seeing Danger Before Moving: Learning Environment-Centric Risk for Safe Robot Navigation","authors":"Palash Yuvraj Ingle, Young-Gab Kim","authorList":["Palash Yuvraj Ingle","Young-Gab Kim"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/133/","topics":["Learning","Navigation and Planning","Safety and Robustness"]},{"id":134,"session":"Navigation 2","title":"Adaptive Smooth Tchebycheff Attention for Multi-Objective Policy Optimization","authors":"Alejandro Murillo-González, Mahmoud Ali, Lantao Liu","authorList":["Alejandro Murillo-González","Mahmoud Ali","Lantao Liu"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/134/","topics":["Learning","Navigation and Planning"]},{"id":135,"session":"Navigation 2","title":"Learning Agile Quadrotor Flight in the Real World","authors":"Yunfan Ren, Zhiyuan Zhu, Jiaxu Xing, Davide Scaramuzza","authorList":["Yunfan Ren","Zhiyuan Zhu","Jiaxu Xing","Davide Scaramuzza"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/135/","topics":["Learning","Navigation and Planning","Aerial and Field Robots"]},{"id":136,"session":"Navigation 2","title":"Asymptotically Optimal Ergodic Coverage on Generalized Motion Fields","authors":"Christian Hughes, Yilang Liu, Yanis Lahrach, Julia Engdahl, Houston Warren, Darrick Lee, Fabio Ramos, Travis Miles, Ian Abraham","authorList":["Christian Hughes","Yilang Liu","Yanis Lahrach","Julia Engdahl","Houston Warren","Darrick Lee","Fabio Ramos","Travis Miles","Ian Abraham"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/136/","topics":["Navigation and Planning","Control and Dynamics"]},{"id":137,"session":"Navigation 2","title":"Learning What Matters: Adaptive Information Theoretic Objectives for Robot Exploration","authors":"Youwei Yu, Jionghao Wang, Zhengming Yu, Wenping Wang, Lantao Liu","authorList":["Youwei Yu","Jionghao Wang","Zhengming Yu","Wenping Wang","Lantao Liu"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/137/","topics":["Learning","Navigation and Planning"]},{"id":138,"session":"Navigation 2","title":"Learning Point Cloud Geometry as a Statistical Manifold: Theory and Practice","authors":"Jinwoo Lee, Jiwoo Kim, Woojae Shin, Giseop Kim, Hyondong Oh","authorList":["Jinwoo Lee","Jiwoo Kim","Woojae Shin","Giseop Kim","Hyondong Oh"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/138/","topics":["Learning","Navigation and Planning","Perception"]},{"id":139,"session":"Imitation learning 2","title":"Tune to Learn: How Controller Gains Shape Robot Policy Learning","authors":"Antonia Bronars, Younghyo Park, Pulkit Agrawal","authorList":["Antonia Bronars","Younghyo Park","Pulkit Agrawal"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/139/","topics":["Learning","Control and Dynamics"]},{"id":140,"session":"Imitation learning 2","title":"Robometer: Scaling General-Purpose Robotic Reward Models via Trajectory Comparisons","authors":"Anthony Liang, Yigit Korkmaz, Jiahui Zhang, Minyoung Hwang, Abrar Anwar, Sidhant Kaushik, Aditya Shah, Alex S. Huang, Luke Zettlemoyer, Dieter Fox, Yu Xiang, Anqi Li, Andreea Bobu, Abhishek Gupta, Stephen Tu, Erdem Biyik, Jesse Zhang","authorList":["Anthony Liang","Yigit Korkmaz","Jiahui Zhang","Minyoung Hwang","Abrar Anwar","Sidhant Kaushik","Aditya Shah","Alex S. Huang","Luke Zettlemoyer","Dieter Fox","Yu Xiang","Anqi Li","Andreea Bobu","Abhishek Gupta","Stephen Tu","Erdem Biyik","Jesse Zhang"],"authorCount":17,"href":"https://roboticsconference.org/program/papers/140/","topics":["Learning","Navigation and Planning"]},{"id":141,"session":"Imitation learning 2","title":"Contact-Anchored Policies: Contact Conditioning Creates Strong Robot Utility Models","authors":"Zichen Jeff Cui, Omar Rayyan, Haritheja Etukuru, Bowen Tan, Zavier Andrianarivo, Zicheng Teng, Yihang Zhou, Krish Mehta, Nicholas Wojno, Kevin Yuanbo Wu, Manan H. Anjaria, Ziyuan Wu, Manrong Mao, Guangxun Zhang, Binit Shah, Yejin Kim, Soumith Chintala, Lerrel Pinto, Nur Muhammad Mahi Shafiullah","authorList":["Zichen Jeff Cui","Omar Rayyan","Haritheja Etukuru","Bowen Tan","Zavier Andrianarivo","Zicheng Teng","Yihang Zhou","Krish Mehta","Nicholas Wojno","Kevin Yuanbo Wu","Manan H. Anjaria","Ziyuan Wu","Manrong Mao","Guangxun Zhang","Binit Shah","Yejin Kim","Soumith Chintala","Lerrel Pinto","Nur Muhammad Mahi Shafiullah"],"authorCount":19,"href":"https://roboticsconference.org/program/papers/141/","topics":["Manipulation","Learning"]},{"id":142,"session":"Imitation learning 2","title":"When to Act, Ask, or Learn: Uncertainty-Aware Policy Steering","authors":"Jessie Yuan, Yilin Wu, Andrea Bajcsy","authorList":["Jessie Yuan","Yilin Wu","Andrea Bajcsy"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/142/","topics":["Learning","Safety and Robustness"]},{"id":143,"session":"Imitation learning 2","title":"ReSteer: Quantifying and Refining the Steerability of Multitask Robot Policies","authors":"Zhenyang Chen, Alan Tian, Liquan Wang, Benjamin Joffe, Yingyan Celine Lin, Yuxiao Chen, Siddharth Karamcheti, Danfei Xu","authorList":["Zhenyang Chen","Alan Tian","Liquan Wang","Benjamin Joffe","Yingyan Celine Lin","Yuxiao Chen","Siddharth Karamcheti","Danfei Xu"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/143/","topics":["Learning"]},{"id":144,"session":"Imitation learning 2","title":"Emergent Neural Automaton Policies: Learning Symbolic Structure from Visuomotor Trajectories","authors":"Yiyuan Pan, Xusheng Luo, Hanjiang Hu, Peiqi Yu, Changliu Liu","authorList":["Yiyuan Pan","Xusheng Luo","Hanjiang Hu","Peiqi Yu","Changliu Liu"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/144/","topics":["Learning"]},{"id":145,"session":"Imitation learning 2","title":"Universal Pose Pretraining for Generalizable Vision-Language-Action Policies","authors":"Haitao Lin, Hanyang Yu, Jingshun Huang, He Zhang, Yonggen Ling, Ping Tan, Xiangyang Xue, Yanwei Fu","authorList":["Haitao Lin","Hanyang Yu","Jingshun Huang","He Zhang","Yonggen Ling","Ping Tan","Xiangyang Xue","Yanwei Fu"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/145/","topics":["Learning","SLAM and Localization","Perception","Language and VLM"]},{"id":146,"session":"Imitation learning 2","title":"EigenSafe: A Spectral Framework for Learning-Based Probabilistic Safety Assessment","authors":"Inkyu Jang, Jonghae Park, Sihyun Cho, Chams Eddine Mballo, Claire Tomlin, H. Jin Kim","authorList":["Inkyu Jang","Jonghae Park","Sihyun Cho","Chams Eddine Mballo","Claire Tomlin","H. Jin Kim"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/146/","topics":["Learning","Safety and Robustness"]},{"id":147,"session":"Imitation learning 2","title":"DISC: Decoupling Instruction from State-Conditioned Control via Policy Generation","authors":"Hanxiang Ren, Pei Zhou, Xunzhe Zhou, Yanchao Yang","authorList":["Hanxiang Ren","Pei Zhou","Xunzhe Zhou","Yanchao Yang"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/147/","topics":["Learning","Control and Dynamics"]},{"id":148,"session":"RL","title":"Zero-Shot Sim-to-Real Robot Learning: A Dexterous Manipulation Study on Reactive Catching","authors":"Kejia Ren, Gaotian Wang, Andrew Morgan, Kaiyu Hang","authorList":["Kejia Ren","Gaotian Wang","Andrew Morgan","Kaiyu Hang"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/148/","topics":["Manipulation","Learning","Navigation and Planning","Simulation and Digital Twins"]},{"id":149,"session":"RL","title":"Emerging Extrinsic Dexterity in Cluttered Scenes via Dynamics-aware Policy Learning","authors":"Yixin Zheng, Jiangran Lyu, Yifan Zhang, Jiayi Chen, Mi Yan, Yuntian Deng, Xuesong Shi, Xiaoguang Zhao, Yizhou Wang, Zhizheng Zhang, He Wang","authorList":["Yixin Zheng","Jiangran Lyu","Yifan Zhang","Jiayi Chen","Mi Yan","Yuntian Deng","Xuesong Shi","Xiaoguang Zhao","Yizhou Wang","Zhizheng Zhang","He Wang"],"authorCount":11,"href":"https://roboticsconference.org/program/papers/149/","topics":["Manipulation","Learning","Control and Dynamics"]},{"id":150,"session":"RL","title":"ViserDex: Visual Sim-to-Real for Robust Dexterous In-hand Reorientation","authors":"Arjun Bhardwaj, Maximum Wilder-Smith, Mayank Mittal, Vaishakh Patil, Marco Hutter","authorList":["Arjun Bhardwaj","Maximum Wilder-Smith","Mayank Mittal","Vaishakh Patil","Marco Hutter"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/150/","topics":["Manipulation","Perception","Simulation and Digital Twins","Safety and Robustness"]},{"id":151,"session":"RL","title":"SimToolReal: An Object-Centric Policy for Zero-Shot Dexterous Tool Manipulation","authors":"Kushal Kedia, Tyler Ga Wei Lum, Jeannette Bohg, Karen Liu","authorList":["Kushal Kedia","Tyler Ga Wei Lum","Jeannette Bohg","Karen Liu"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/151/","topics":["Manipulation","Learning"]},{"id":152,"session":"RL","title":"Latent Policy Steering through One-Step Flow Policies","authors":"Hokyun Im, Andrey Kolobov, Jianlong Fu, Youngwoon Lee","authorList":["Hokyun Im","Andrey Kolobov","Jianlong Fu","Youngwoon Lee"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/152/","topics":["Learning"]},{"id":153,"session":"RL","title":"When Life Gives You BC, Make Q-functions: Extracting Q-values from Behavior Cloning for On-Robot Reinforcement Learning","authors":"Lakshita Dodeja, Ondrej Biza, Shivam Vats, Stephen Hart, Stefanie Tellex, Robin Walters, Karl Schmeckpeper, Thomas Weng","authorList":["Lakshita Dodeja","Ondrej Biza","Shivam Vats","Stephen Hart","Stefanie Tellex","Robin Walters","Karl Schmeckpeper","Thomas Weng"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/153/","topics":["Learning"]},{"id":154,"session":"RL","title":"Offline Policy Evaluation for Manipulation Policies via Discounted Liveness Formulation","authors":"Hao Wang, Joshua Bowden, Colton Crosby, Somil Bansal","authorList":["Hao Wang","Joshua Bowden","Colton Crosby","Somil Bansal"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/154/","topics":["Manipulation","Learning"]},{"id":155,"session":"RL","title":"HydroShear: Hydroelastic Shear Simulation for Tactile Sim-to-Real Reinforcement Learning","authors":"An Thanh Dang, Jayjun Lee, Mustafa Mukadam, X. Alice Wu, Bernadette Bucher, Manikantan Nambi, Nima Fazeli","authorList":["An Thanh Dang","Jayjun Lee","Mustafa Mukadam","X. Alice Wu","Bernadette Bucher","Manikantan Nambi","Nima Fazeli"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/155/","topics":["Manipulation","Learning","Simulation and Digital Twins"]},{"id":156,"session":"RL","title":"Toward Reliable Sim-to-Real Predictability for MoE-based Robust Quadrupedal Locomotion","authors":"Tianyang Wu, Hanwei Guo, Yuhang Wang, Junshu Yang, Xinyang Sui, Jiayi Xie, Xingyu Chen, Zeyang Liu, Xuguang Lan","authorList":["Tianyang Wu","Hanwei Guo","Yuhang Wang","Junshu Yang","Xinyang Sui","Jiayi Xie","Xingyu Chen","Zeyang Liu","Xuguang Lan"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/156/","topics":["Humanoids and Locomotion","Simulation and Digital Twins","Safety and Robustness"]},{"id":157,"session":"Modeling and Optimization","title":"Guided Streaming Stochastic Interpolant Policy","authors":"Puming Jiang, Meiyi Wang, Lin Kelvin, Ce Hao, Harold Soh","authorList":["Puming Jiang","Meiyi Wang","Lin Kelvin","Ce Hao","Harold Soh"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/157/","topics":["Learning"]},{"id":158,"session":"Modeling and Optimization","title":"Damage Adaptation in Seconds for Architected Materials","authors":"James Avtges, Jake B. Ketchum, Helena Young, Taekyoung Kim, Ryan L. Truby, Todd Murphey","authorList":["James Avtges","Jake B. Ketchum","Helena Young","Taekyoung Kim","Ryan L. Truby","Todd Murphey"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/158/","topics":["Other"]},{"id":159,"session":"Modeling and Optimization","title":"NeuralActuator: Neural Actuation Modeling for Robot Dynamics and External Force Perception","authors":"Zhiyang Dou, John U. Onyemelukwe, Hangxing Zhang, Heng Zhang, Minghao Guo, Yunsheng Tian, Michal Piotr Lipiec, Joshua Jacob, Chao Liu, Peter Yichen Chen, Yuri Ivanov, Wojciech Matusik","authorList":["Zhiyang Dou","John U. Onyemelukwe","Hangxing Zhang","Heng Zhang","Minghao Guo","Yunsheng Tian","Michal Piotr Lipiec","Joshua Jacob","Chao Liu","Peter Yichen Chen","Yuri Ivanov","Wojciech Matusik"],"authorCount":12,"href":"https://roboticsconference.org/program/papers/159/","topics":["Perception","Control and Dynamics"]},{"id":160,"session":"Modeling and Optimization","title":"Muninn: Your Trajectory Diffusion Model But Faster","authors":"Gokul Puthumanaillam, Hao Jiang, Ruben Hernandez, Jose Fuentes, Paulo Padrao, Leonardo Bobadilla, Melkior Ornik","authorList":["Gokul Puthumanaillam","Hao Jiang","Ruben Hernandez","Jose Fuentes","Paulo Padrao","Leonardo Bobadilla","Melkior Ornik"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/160/","topics":["Learning","Navigation and Planning"]},{"id":161,"session":"Modeling and Optimization","title":"Consensus-based optimization (CBO): Towards Global Optimality in Robotics","authors":"Xudong Sun, Armand Jordana, Massimo Fornasier, Jalal Etesami, Majid Khadiv","authorList":["Xudong Sun","Armand Jordana","Massimo Fornasier","Jalal Etesami","Majid Khadiv"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/161/","topics":["Control and Dynamics"]},{"id":162,"session":"Modeling and Optimization","title":"Natural Functional Gradients for Smooth Trajectory Optimization","authors":"Kisang Park, Chan Woo Kim, Kyungjae Lee, Sungjoon Choi","authorList":["Kisang Park","Chan Woo Kim","Kyungjae Lee","Sungjoon Choi"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/162/","topics":["Navigation and Planning"]},{"id":163,"session":"Modeling and Optimization","title":"IMPACT: An Implicit Active-Set Augmented Lagrangian for Fast Contact-Implicit Trajectory Optimization","authors":"Jiayun Li, Dejian Gong, Georgia Chalvatzaki","authorList":["Jiayun Li","Dejian Gong","Georgia Chalvatzaki"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/163/","topics":["Manipulation","Navigation and Planning"]},{"id":164,"session":"Modeling and Optimization","title":"RIO: Flexible Real-time Robot I/O for Cross-Embodiment Robot Learning","authors":"Pablo Agustin Ortega-Kral, Eliot Xing, Arthur Bucker, Vernon Luk, Junseo Kim, Owen Kwon, Angchen Xie, Nikhil Sobanbabu, Yifu Yuan, Megan Lee, Deepam Ameria, Bhaswanth Ayapilla, Jaycie Bussell, Guanya Shi, Jonathan Francis, Jean Oh","authorList":["Pablo Agustin Ortega-Kral","Eliot Xing","Arthur Bucker","Vernon Luk","Junseo Kim","Owen Kwon","Angchen Xie","Nikhil Sobanbabu","Yifu Yuan","Megan Lee","Deepam Ameria","Bhaswanth Ayapilla","Jaycie Bussell","Guanya Shi","Jonathan Francis","Jean Oh"],"authorCount":16,"href":"https://roboticsconference.org/program/papers/164/","topics":["Learning"]},{"id":165,"session":"Modeling and Optimization","title":"Structured Learning for Electromagnetic Field Modeling and Real-Time Inversion","authors":"António Bernardes, Jasan Zughaibi, Michael Muehlebach, Bradley J. Nelson","authorList":["António Bernardes","Jasan Zughaibi","Michael Muehlebach","Bradley J. Nelson"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/165/","topics":["Learning"]},{"id":166,"session":"Perception and Estimation","title":"FreeOcc: Training-Free Embodied Open-Vocabulary Occupancy Prediction","authors":"Zeyu Jiang, Changqing Zhou, Xingxing Zuo, Changhao Chen","authorList":["Zeyu Jiang","Changqing Zhou","Xingxing Zuo","Changhao Chen"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/166/","topics":["Perception"]},{"id":167,"session":"Perception and Estimation","title":"More with LESS – Local Scene Representations for Tactile Imaging","authors":"Zohar Rimon, Elisei Shafer, Tal Tepper, Daniel Kozin, Alon Malka, Roy Holland, Aviv Tamar","authorList":["Zohar Rimon","Elisei Shafer","Tal Tepper","Daniel Kozin","Alon Malka","Roy Holland","Aviv Tamar"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/167/","topics":["Manipulation","Perception"]},{"id":168,"session":"Perception and Estimation","title":"AnyAmber: A Generalist for Versatile Anonymous Bearing and Range Based Position Tracking","authors":"Si Wang, Yanmei Jiao, Yanjun Cao, Rong Xiong, Yue Wang","authorList":["Si Wang","Yanmei Jiao","Yanjun Cao","Rong Xiong","Yue Wang"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/168/","topics":["SLAM and Localization","Perception","Control and Dynamics"]},{"id":169,"session":"Perception and Estimation","title":"Anticipatory Motion Suppression in Event-Based Cameras","authors":"Roberto Pellerito, Nico Messikommer, Giovanni Cioffi, Marco Cannici, Davide Scaramuzza","authorList":["Roberto Pellerito","Nico Messikommer","Giovanni Cioffi","Marco Cannici","Davide Scaramuzza"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/169/","topics":["Perception"]},{"id":170,"session":"Perception and Estimation","title":"From Local Matches to Global Masks: Template-Guided Instance Detection and Segmentation in Open-World Scenes","authors":"Qifan Zhang, Sai Haneesh Allu, Jikai Wang, Yangxiao Lu, Yu Xiang","authorList":["Qifan Zhang","Sai Haneesh Allu","Jikai Wang","Yangxiao Lu","Yu Xiang"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/170/","topics":["Perception"]},{"id":171,"session":"Perception and Estimation","title":"TE-SDF: Tetra-Encoded Signed Distance Field for Memory-Efficient and Accurate Collision Detection","authors":"Harim Ji, Yongseok Lee, Dongjun Lee","authorList":["Harim Ji","Yongseok Lee","Dongjun Lee"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/171/","topics":["Navigation and Planning","Perception","Language and VLM"]},{"id":172,"session":"Perception and Estimation","title":"Seeing is Believing: Certified Perception-Based Control from Learned Visual Representations via System Level Synthesis","authors":"Antoine Leeman, Shuyu Zhan, Melanie N. Zeilinger, Glen Chou","authorList":["Antoine Leeman","Shuyu Zhan","Melanie N. Zeilinger","Glen Chou"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/172/","topics":["Learning","Perception","Control and Dynamics"]},{"id":173,"session":"Perception and Estimation","title":"Picasso: Holistic Scene Reconstruction with Physics-Constrained Sampling","authors":"Xihang Yu, Rajat Talak, Lorenzo Shaikewitz, Luca Carlone","authorList":["Xihang Yu","Rajat Talak","Lorenzo Shaikewitz","Luca Carlone"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/173/","topics":["Perception"]},{"id":174,"session":"Perception and Estimation","title":"Simulation-Ready Cluttered Scene Estimation via Physics-aware Joint Shape and Pose Optimization","authors":"Wei-Cheng Huang, Jiaheng Han, Xiaohan Ye, Zherong Pan, Kris Hauser","authorList":["Wei-Cheng Huang","Jiaheng Han","Xiaohan Ye","Zherong Pan","Kris Hauser"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/174/","topics":["SLAM and Localization","Perception","Simulation and Digital Twins"]},{"id":175,"session":"Perception and Estimation","title":"Viser: Imperative, Web-based 3D Visualization for Python","authors":"Brent Yi, Chung Min Kim, Justin Kerr, Gina Wu, Rebecca Feng, Anthony Zhang, Jonas Kulhanek, Hongsuk Choi, Yi Ma, Matthew Tancik, Angjoo Kanazawa","authorList":["Brent Yi","Chung Min Kim","Justin Kerr","Gina Wu","Rebecca Feng","Anthony Zhang","Jonas Kulhanek","Hongsuk Choi","Yi Ma","Matthew Tancik","Angjoo Kanazawa"],"authorCount":11,"href":"https://roboticsconference.org/program/papers/175/","topics":["Perception"]},{"id":176,"session":"Perception and Estimation","title":"Motion-Uncertainty-Aware Next-Best-View Planning for Moving Object Reconstruction","authors":"Karen Li, Mattia Mantovani, Robert Wood, Lorenzo Sabattini, Stephanie Gil","authorList":["Karen Li","Mattia Mantovani","Robert Wood","Lorenzo Sabattini","Stephanie Gil"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/176/","topics":["Perception","Safety and Robustness"]},{"id":177,"session":"Perception and Estimation","title":"Relaxation-Aware Multimodal Sensing of Soft Gripper Driven by Structure-Perception-Learning","authors":"Yanzhe Wang, Hao Wu, Ziyi Zheng, Huixu Dong","authorList":["Yanzhe Wang","Hao Wu","Ziyi Zheng","Huixu Dong"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/177/","topics":["Manipulation","Learning","Perception","Soft and Bio-inspired"]},{"id":178,"session":"Perception and Estimation","title":"CoCo-InEKF: State Estimation with Learned Contact Covariances in Dynamic, Contact-Rich Scenarios","authors":"Michael Baumgartner, David Müller, Agon Serifi, Ruben Grandia, Espen Knoop, Markus Gross, Moritz Bächer","authorList":["Michael Baumgartner","David Müller","Agon Serifi","Ruben Grandia","Espen Knoop","Markus Gross","Moritz Bächer"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/178/","topics":["Manipulation","Learning","Perception"]},{"id":179,"session":"Planning","title":"Vec-QMDP: Vectorized POMDP Planning on CPUs for Real-Time Autonomous Driving","authors":"Jin Xuanjin, Yanxin Dong, Bin Sun, Huan Xu, Zhihui Hao, Xianpeng Lang, Panpan Cai","authorList":["Jin Xuanjin","Yanxin Dong","Bin Sun","Huan Xu","Zhihui Hao","Xianpeng Lang","Panpan Cai"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/179/","topics":["Other"]},{"id":180,"session":"Planning","title":"From Reaction to Anticipation: Proactive Failure Recovery through Agentic Task Graph for Robotic Manipulation","authors":"Sheng Xu, Ruixing Jin, Huayi Zhou, Bo Yue, Guanren Qiao, Yunxin Tai, Yueci Deng, Kui Jia, Guiliang Liu","authorList":["Sheng Xu","Ruixing Jin","Huayi Zhou","Bo Yue","Guanren Qiao","Yunxin Tai","Yueci Deng","Kui Jia","Guiliang Liu"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/180/","topics":["Manipulation"]},{"id":181,"session":"Planning","title":"Hypothesis-driven Model Expansion under Uncertainty for Open-World Robot Planning","authors":"Anxing Xiao, Hanbo Zhang, Tianrun Hu, David Hsu","authorList":["Anxing Xiao","Hanbo Zhang","Tianrun Hu","David Hsu"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/181/","topics":["Safety and Robustness"]},{"id":182,"session":"Planning","title":"ELVIS: Ensemble-Calibrated Latent Imagination for Long-Horizon Visual MPC","authors":"Yurui Du, Pinhao Song, Yutong Hu, Renaud Detry","authorList":["Yurui Du","Pinhao Song","Yutong Hu","Renaud Detry"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/182/","topics":["Perception","Control and Dynamics"]},{"id":183,"session":"Planning","title":"Informative Path Planning with Guaranteed Estimation Uncertainty","authors":"Kalvik Jakkala, Saurav Agarwal, Jason O'kane, Srinivas Akella","authorList":["Kalvik Jakkala","Saurav Agarwal","Jason O'kane","Srinivas Akella"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/183/","topics":["Navigation and Planning","Perception","Safety and Robustness"]},{"id":184,"session":"Planning","title":"KinDER: A Physical Reasoning Benchmark for Robot Learning and Planning","authors":"Yixuan Huang, Bowen Li, Vaibhav Saxena, Yichao Liang, Utkarsh Aashu Mishra, Liang Ji, Lihan Zha, Jimmy Wu, Nishanth Kumar, Sebastian Scherer, Danfei Xu, Tom Silver","authorList":["Yixuan Huang","Bowen Li","Vaibhav Saxena","Yichao Liang","Utkarsh Aashu Mishra","Liang Ji","Lihan Zha","Jimmy Wu","Nishanth Kumar","Sebastian Scherer","Danfei Xu","Tom Silver"],"authorCount":12,"href":"https://roboticsconference.org/program/papers/184/","topics":["Learning","Simulation and Digital Twins"]},{"id":185,"session":"Planning","title":"Integrated Hierarchical Decision-Making in Inverse Kinematic Planning and Control","authors":"Kai Pfeiffer, Quan Zhang, Yuqing Chen, Gordon Owusu Boateng, Yuquan Wang, Vincent Bonnet, Abderrahmane Kheddar","authorList":["Kai Pfeiffer","Quan Zhang","Yuqing Chen","Gordon Owusu Boateng","Yuquan Wang","Vincent Bonnet","Abderrahmane Kheddar"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/185/","topics":["Control and Dynamics"]},{"id":186,"session":"Planning","title":"HOP: Fast Differential Dynamic Programming for Horizon-Optimal Trajectory Planning","authors":"Miaomiao Dai, Zhongqiang Ren","authorList":["Miaomiao Dai","Zhongqiang Ren"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/186/","topics":["Navigation and Planning","Control and Dynamics"]},{"id":187,"session":"Planning","title":"Implicit Null-space Manifold Generation for Redundant Robotic Systems","authors":"Taiki Ishigaki, Teresa Vidal-Calleja, Ko Ayusawa, Eiichi Yoshida","authorList":["Taiki Ishigaki","Teresa Vidal-Calleja","Ko Ayusawa","Eiichi Yoshida"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/187/","topics":["Other"]},{"id":188,"session":"Planning","title":"Exploit Agile Mobility of Steerable-Wheeled Mobile Robots: A Fast Motion Planning Approach","authors":"Wang Xi, Jingxuan Tang, Zhiyuan Zeng, Yushan Li, Jianping He","authorList":["Wang Xi","Jingxuan Tang","Zhiyuan Zeng","Yushan Li","Jianping He"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/188/","topics":["Navigation and Planning"]},{"id":189,"session":"Planning","title":"Sampling-Based Follow-the-Leader Motion Planning for Manipulator-Mounted Continuum Robots","authors":"Chengnan Shentu, Nicholas Baldassini, Oluwagbotemi D. Iseoluwa, Radian Gondokaryono, Jessica Burgner-Kahrs","authorList":["Chengnan Shentu","Nicholas Baldassini","Oluwagbotemi D. Iseoluwa","Radian Gondokaryono","Jessica Burgner-Kahrs"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/189/","topics":["Manipulation","Navigation and Planning","Soft and Bio-inspired"]},{"id":190,"session":"Planning","title":"Certifiable Gradient-Based Contact-Rich Manipulation via Smoothing-Error Reachable Tubes","authors":"Wei-Chen Li, Glen Chou","authorList":["Wei-Chen Li","Glen Chou"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/190/","topics":["Manipulation"]},{"id":191,"session":"Planning","title":"Parallel Differentiable Reachability for Learning and Planning with Certified Neural Dynamics and Controllers","authors":"Keyi Shen, Glen Chou","authorList":["Keyi Shen","Glen Chou"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/191/","topics":["Learning","Control and Dynamics"]},{"id":192,"session":"Robot & Sensor Design","title":"CRAFT: A Tendon-Driven Hand with Hybrid Hard-Soft Compliance","authors":"Leo Lin, Shivansh Patel, Jay Moon, Svetlana Lazebnik, Unnat Jain","authorList":["Leo Lin","Shivansh Patel","Jay Moon","Svetlana Lazebnik","Unnat Jain"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/192/","topics":["Manipulation","Soft and Bio-inspired"]},{"id":193,"session":"Robot & Sensor Design","title":"LightTact: A Visual-Tactile Fingertip Sensor for Deformation-Independent Contact Sensing","authors":"Changyi Lin, Boda Huo, Mingyang Yu, Emily Ruppel, Bingqing Chen, Jonathan Francis, Ding Zhao","authorList":["Changyi Lin","Boda Huo","Mingyang Yu","Emily Ruppel","Bingqing Chen","Jonathan Francis","Ding Zhao"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/193/","topics":["Manipulation","Perception"]},{"id":194,"session":"Robot & Sensor Design","title":"Bridging Language and Physics: Automated Design of Continuum Robots with Large Language Models","authors":"Jingyi Chen, Mohan Zhang, Laura Yao, Yingtai Ni, Jianmin Ji, Jie Peng, Song Wang, Tianlong Chen","authorList":["Jingyi Chen","Mohan Zhang","Laura Yao","Yingtai Ni","Jianmin Ji","Jie Peng","Song Wang","Tianlong Chen"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/194/","topics":["Language and VLM","Soft and Bio-inspired"]},{"id":195,"session":"Robot & Sensor Design","title":"Latent Diffeomorphic Co-Design of End-Effectors for Deformable and Fragile Object Manipulation","authors":"Kei Ikemura, Yifei Dong, Florian T. Pokorny","authorList":["Kei Ikemura","Yifei Dong","Florian T. Pokorny"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/195/","topics":["Manipulation"]},{"id":196,"session":"Robot & Sensor Design","title":"Computational Design of a Low-Visibility UAV Using a Human-Aligned Perceptual Metric","authors":"Jingxian Wang, Chen Yu, David Matthews, Emma Alexander, Sam Kriegman, Michael Rubenstein","authorList":["Jingxian Wang","Chen Yu","David Matthews","Emma Alexander","Sam Kriegman","Michael Rubenstein"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/196/","topics":["Human-Robot Interaction","Aerial and Field Robots"]},{"id":197,"session":"Robot & Sensor Design","title":"A Dual-Mode Electrical Capacitance Tomography Sensor for Robotic Proximity Servoing and Grasping","authors":"Duanpeng Shi, Yuliang Wang, Yuming Huang, Huaping Liu, Di Guo","authorList":["Duanpeng Shi","Yuliang Wang","Yuming Huang","Huaping Liu","Di Guo"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/197/","topics":["Manipulation"]},{"id":198,"session":"Robot & Sensor Design","title":"Continuum Robot Modeling with Action Conditioned Flow Matching","authors":"Jiong Lin, Jinchen Ruan, Hod Lipson","authorList":["Jiong Lin","Jinchen Ruan","Hod Lipson"],"authorCount":3,"href":"https://roboticsconference.org/program/papers/198/","topics":["Soft and Bio-inspired"]},{"id":199,"session":"Robot & Sensor Design","title":"A Super-Resolution and Multi-Axis Tactile Sensor with Soft Artificial Skin","authors":"Hongxu Wei, Zhoulu, Peisen Xu, Yang Xu, Xuanyi Yang, Wei Zhao, Jiming Chen, Gaofeng Li","authorList":["Hongxu Wei","Zhoulu","Peisen Xu","Yang Xu","Xuanyi Yang","Wei Zhao","Jiming Chen","Gaofeng Li"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/199/","topics":["Manipulation","Soft and Bio-inspired"]},{"id":200,"session":"Robot & Sensor Design","title":"Active Surface-Driven Reconfigurable Gripper: Robust Grasping and Sequential Manipulation of Thin Objects","authors":"Ziyi Zheng, Keqi Zhu, Hao Wu, Yanzhe Wang, Huixu Dong","authorList":["Ziyi Zheng","Keqi Zhu","Hao Wu","Yanzhe Wang","Huixu Dong"],"authorCount":5,"href":"https://roboticsconference.org/program/papers/200/","topics":["Manipulation","Safety and Robustness"]},{"id":201,"session":"Imitation learning 3","title":"Long-Context Robot Imitation Learning by Focusing on Key History Frames","authors":"Max Sobol Mark, Maria Attarian, Chuyuan Fu, Debidatta Dwibedi, Jacky Liang, Dhruv Shah, Aviral Kumar","authorList":["Max Sobol Mark","Maria Attarian","Chuyuan Fu","Debidatta Dwibedi","Jacky Liang","Dhruv Shah","Aviral Kumar"],"authorCount":7,"href":"https://roboticsconference.org/program/papers/201/","topics":["Learning"]},{"id":202,"session":"Imitation learning 3","title":"Functional Force-Aware Retargeting from Virtual Human Demos to Soft Robot Policies","authors":"Uksang Yoo, Mengjia Zhu, Evan Pezent, Jom Preechayasomboon, Jean Oh, Jeffrey Ichnowski, Amirhossein H. Memar, Ben Abbatematteo, Homanga Bharadhwaj, Ashish Deshpande, Harsha Prahlad","authorList":["Uksang Yoo","Mengjia Zhu","Evan Pezent","Jom Preechayasomboon","Jean Oh","Jeffrey Ichnowski","Amirhossein H. Memar","Ben Abbatematteo","Homanga Bharadhwaj","Ashish Deshpande","Harsha Prahlad"],"authorCount":11,"href":"https://roboticsconference.org/program/papers/202/","topics":["Learning","Human-Robot Interaction","Simulation and Digital Twins","Soft and Bio-inspired"]},{"id":203,"session":"Imitation learning 3","title":"LAP: Language-Action Pre-training Enables Zero-Shot Cross-Embodiment Transfer","authors":"Lihan Zha, Asher James Hancock, Mingtong Zhang, Tenny Yin, Yixuan Huang, Dhruv Shah, Allen Z. Ren, Anirudha Majumdar","authorList":["Lihan Zha","Asher James Hancock","Mingtong Zhang","Tenny Yin","Yixuan Huang","Dhruv Shah","Allen Z. Ren","Anirudha Majumdar"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/203/","topics":["Learning","Language and VLM"]},{"id":204,"session":"Imitation learning 3","title":"Unlocking In-the-Wild Loco-Manipulation with Robot-Free Egocentric Demonstration","authors":"Modi Shi, Shijiapeng, Jin Chen, Haoran Jiang, Tianyu Li, Ping Luo, Di Huang, Hongyang Li, Li Chen","authorList":["Modi Shi","Shijiapeng","Jin Chen","Haoran Jiang","Tianyu Li","Ping Luo","Di Huang","Hongyang Li","Li Chen"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/204/","topics":["Manipulation","Learning"]},{"id":205,"session":"Imitation learning 3","title":"HoMMI: Learning Whole-Body Mobile Manipulation from Human Demonstrations","authors":"Xiaomeng Xu, Jisang Park, Han Zhang, Eric Cousineau, Aditya Bhat, Jose Barreiros, Dian Wang, Jeannette Bohg, Shuran Song","authorList":["Xiaomeng Xu","Jisang Park","Han Zhang","Eric Cousineau","Aditya Bhat","Jose Barreiros","Dian Wang","Jeannette Bohg","Shuran Song"],"authorCount":9,"href":"https://roboticsconference.org/program/papers/205/","topics":["Manipulation","Learning","Human-Robot Interaction"]},{"id":206,"session":"Imitation learning 3","title":"Mimic Intent, Not Just Trajectories","authors":"Renming Huang, Chendong Zeng, Wenjing Tang, Jintian Cai, Cewu Lu, Panpan Cai","authorList":["Renming Huang","Chendong Zeng","Wenjing Tang","Jintian Cai","Cewu Lu","Panpan Cai"],"authorCount":6,"href":"https://roboticsconference.org/program/papers/206/","topics":["Learning"]},{"id":207,"session":"Imitation learning 3","title":"TAIL-Safe: Task-Agnostic Safety Monitoring for Imitation Learning Policies","authors":"Riad Ahmed, Momotaz Begum","authorList":["Riad Ahmed","Momotaz Begum"],"authorCount":2,"href":"https://roboticsconference.org/program/papers/207/","topics":["Learning","Safety and Robustness"]},{"id":208,"session":"Imitation learning 3","title":"TMRL: Diffusion Timestep-Modulated Pretraining Enables Exploration for Efficient Policy Finetuning","authors":"Matthew M. Hong, Jesse Zhang, Anusha Nagabandi, Abhishek Gupta","authorList":["Matthew M. Hong","Jesse Zhang","Anusha Nagabandi","Abhishek Gupta"],"authorCount":4,"href":"https://roboticsconference.org/program/papers/208/","topics":["Learning"]},{"id":209,"session":"Imitation learning 3","title":"Action-to-Action Flow Matching","authors":"Jindou Jia, Gen Li, Xiangyu Chen, Tuo An, Yuxuan Hu, Jingliang Li, Xinying Guo, Jianfei Yang","authorList":["Jindou Jia","Gen Li","Xiangyu Chen","Tuo An","Yuxuan Hu","Jingliang Li","Xinying Guo","Jianfei Yang"],"authorCount":8,"href":"https://roboticsconference.org/program/papers/209/","topics":["Learning"]},{"id":210,"session":"Imitation learning 3","title":"LDA-1B: Scaling Latent Dynamics Action Model via Universal Embodied Data Ingestion","authors":"Jiangran Lyu, Kai Liu, Xuheng Zhang, Haoran Liao, Yusen Feng, Wenxuan Zhu, Tingrui Shen, Jiayi Chen, Jiazhao Zhang, Yifei Dong, Cui Wenbo, Senmao Qi, Shuo Wang, Yixin Zheng, Mi Yan, Xuesong Shi, Haoran Li, Dongbin Zhao, Ming-Yu Liu, Zhizheng Zhang, Li Yi, Yizhou Wang, He Wang","authorList":["Jiangran Lyu","Kai Liu","Xuheng Zhang","Haoran Liao","Yusen Feng","Wenxuan Zhu","Tingrui Shen","Jiayi Chen","Jiazhao Zhang","Yifei Dong","Cui Wenbo","Senmao Qi","Shuo Wang","Yixin Zheng","Mi Yan","Xuesong Shi","Haoran Li","Dongbin Zhao","Ming-Yu Liu","Zhizheng Zhang","Li Yi","Yizhou Wang","He Wang"],"authorCount":23,"href":"https://roboticsconference.org/program/papers/210/","topics":["Learning","Control and Dynamics"]}]</script>
+<script id="meta-data" type="application/json">{"venue":"RSS 2026","title":"RSS 2026 Paper Explorer","description":"RSS 2026, July 13, 2026 - July 17, 2026, Sydney, Australia","sourceFile":"C:\\Users\\user\\Downloads\\Accepted Papers · Robotics_ Science and Systems.html","sourceModified":"2026-06-05T09:14:05","generatedAt":"2026-06-05T11:50:57","paperCount":210,"sessionCount":21,"topicCount":16,"avgAuthors":7.4,"largestSession":["Humanoids",13],"topAuthor":["Jose Barreiros",5],"topicNames":["Manipulation","Learning","SLAM and Localization","Navigation and Planning","Perception","Control and Dynamics","Multi-Robot","Human-Robot Interaction","Aerial and Field Robots","Medical and Surgical","Humanoids and Locomotion","Language and VLM","Simulation and Digital Twins","Safety and Robustness","Soft and Bio-inspired","Other"]}</script>
+<script>
+const papers = JSON.parse(document.getElementById("papers-data").textContent);
+const meta = JSON.parse(document.getElementById("meta-data").textContent);
+const state = {
+  q1: "",
+  q2: "",
+  q3: "",
+  searchMode: "AND",
+  session: "",
+  topic: "",
+  author: "",
+  authorRange: "",
+  sort: "id-asc",
+  pageSize: "25",
+  page: 1
+};
+
+const topicPalette = [
+  "#0066cc", "#248a3d", "#b25000", "#6e3ad6", "#c0185c",
+  "#8a6d00", "#087a8f", "#4b6b1b", "#9a3412", "#3b5bdb"
+];
+
+function escapeHTML(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function countBy(items, fn) {
+  const counts = new Map();
+  for (const item of items) {
+    const keys = fn(item);
+    for (const key of Array.isArray(keys) ? keys : [keys]) {
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+  }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])));
+}
+
+function setFilter(kind, value) {
+  const nextValue = state[kind] === value ? "" : value;
+  if (kind === "session") {
+    state.session = nextValue;
+    document.getElementById("sessionFilter").value = nextValue;
+  }
+  if (kind === "topic") {
+    state.topic = nextValue;
+    document.getElementById("topicFilter").value = nextValue;
+  }
+  if (kind === "author") {
+    state.author = nextValue;
+  }
+  state.page = 1;
+  renderResults();
+  document.getElementById("search").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function updateFilterButtonStates() {
+  document.querySelectorAll("[data-filter-kind], [data-paper-filter]").forEach(button => {
+    const kind = button.dataset.filterKind || button.dataset.paperFilter;
+    const value = button.dataset.filterValue || "";
+    const active = Boolean(kind && state[kind] === value);
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+}
+
+function renderBarList(el, rows, opts = {}) {
+  const max = Math.max(1, ...rows.map(row => row[1]));
+  el.innerHTML = rows.map((row, index) => {
+    const label = row[0];
+    const count = row[1];
+    const width = Math.max(2, Math.round(count / max * 100));
+    const fillClass = opts.topic ? `topic-fill-${index % 10}` : "";
+    const button = opts.filterKind
+      ? `<button type="button" data-filter-kind="${opts.filterKind}" data-filter-value="${escapeHTML(label)}">${escapeHTML(label)}</button>`
+      : escapeHTML(label);
+    return `<div class="bar-row">
+      <div class="bar-label" title="${escapeHTML(label)}">${button}</div>
+      <div class="bar-track"><div class="bar-fill ${fillClass}" style="width:${width}%"></div></div>
+      <div class="bar-count">${count}</div>
+    </div>`;
+  }).join("");
+  el.querySelectorAll("[data-filter-kind]").forEach(button => {
+    button.addEventListener("click", () => setFilter(button.dataset.filterKind, button.dataset.filterValue));
+  });
+}
+
+function populateSelects() {
+  const sessions = countBy(papers, paper => paper.session).map(row => row[0]);
+  const topics = countBy(papers, paper => paper.topics).map(row => row[0]);
+  document.getElementById("sessionFilter").insertAdjacentHTML(
+    "beforeend",
+    sessions.map(session => `<option value="${escapeHTML(session)}">${escapeHTML(session)}</option>`).join("")
+  );
+  document.getElementById("topicFilter").insertAdjacentHTML(
+    "beforeend",
+    topics.map(topic => `<option value="${escapeHTML(topic)}">${escapeHTML(topic)}</option>`).join("")
+  );
+
+  document.getElementById("quickTopics").innerHTML = topics.slice(0, 8).map(topic =>
+    `<button class="side-filter" type="button" data-filter-kind="topic" data-filter-value="${escapeHTML(topic)}">${escapeHTML(topic)}</button>`
+  ).join("");
+  document.getElementById("quickSessions").innerHTML = sessions.slice(0, 8).map(session =>
+    `<button class="side-filter" type="button" data-filter-kind="session" data-filter-value="${escapeHTML(session)}">${escapeHTML(session)}</button>`
+  ).join("");
+  document.querySelectorAll(".side-filter").forEach(button => {
+    button.addEventListener("click", () => setFilter(button.dataset.filterKind, button.dataset.filterValue));
+  });
+}
+
+function renderOverview() {
+  document.getElementById("topPaperCount").textContent = meta.paperCount;
+  document.getElementById("topSessionCount").textContent = meta.sessionCount;
+  document.getElementById("metricPapers").textContent = meta.paperCount;
+  document.getElementById("metricSessions").textContent = meta.sessionCount;
+  document.getElementById("metricAvgAuthors").textContent = meta.avgAuthors.toFixed(1);
+  document.getElementById("metricTopics").textContent = countBy(papers, paper => paper.topics).length;
+  document.getElementById("largestSession").textContent = `${meta.largestSession[0]} has ${meta.largestSession[1]} papers.`;
+  document.getElementById("sourceNote").textContent =
+    `Source: ${meta.sourceFile} | source modified ${meta.sourceModified} | generated ${meta.generatedAt}`;
+}
+
+function renderCharts() {
+  const sessionCounts = countBy(papers, paper => paper.session);
+  const topicCounts = countBy(papers, paper => paper.topics);
+  const authorDistribution = countBy(papers, paper => {
+    const n = paper.authorCount;
+    if (n <= 3) return "1-3";
+    if (n <= 6) return "4-6";
+    if (n <= 10) return "7-10";
+    if (n <= 15) return "11-15";
+    return "16+";
+  });
+  const topAuthors = countBy(
+    papers.flatMap(paper => paper.authorList),
+    author => author
+  ).filter(row => row[1] > 1).slice(0, 14);
+
+  renderBarList(document.getElementById("sessionBars"), sessionCounts, { filterKind: "session" });
+  renderBarList(document.getElementById("sessionSummary"), sessionCounts.slice(0, 8), { filterKind: "session" });
+  renderBarList(document.getElementById("topicBars"), topicCounts, { filterKind: "topic", topic: true });
+  renderBarList(document.getElementById("topicCoverage"), topicCounts.slice(0, 10), { filterKind: "topic", topic: true });
+  renderBarList(document.getElementById("authorCountBars"), authorDistribution);
+  renderBarList(document.getElementById("topAuthors"), topAuthors.length ? topAuthors : [["No repeated author names", 0]], { filterKind: "author" });
+  renderHeatmap(sessionCounts.map(row => row[0]), topicCounts.filter(row => row[0] !== "Other").slice(0, 10).map(row => row[0]));
+}
+
+function renderHeatmap(sessions, topics) {
+  const matrix = new Map();
+  let max = 1;
+  for (const paper of papers) {
+    for (const topic of paper.topics) {
+      if (!topics.includes(topic)) continue;
+      const key = `${paper.session}||${topic}`;
+      const value = (matrix.get(key) || 0) + 1;
+      matrix.set(key, value);
+      max = Math.max(max, value);
+    }
+  }
+  const header = `<tr><th>Session</th>${topics.map(topic => `<th title="${escapeHTML(topic)}">${escapeHTML(shortTopic(topic))}</th>`).join("")}</tr>`;
+  const body = sessions.map(session => {
+    const cells = topics.map((topic, index) => {
+      const count = matrix.get(`${session}||${topic}`) || 0;
+      const alpha = count ? 0.12 + (count / max) * 0.72 : 0;
+      const color = topicPalette[index % topicPalette.length];
+      return `<td><div class="heat-cell" title="${escapeHTML(session)} / ${escapeHTML(topic)}: ${count}" style="background:${count ? hexToRgba(color, alpha) : "transparent"}">${count || ""}</div></td>`;
+    }).join("");
+    return `<tr><td>${escapeHTML(session)}</td>${cells}</tr>`;
+  }).join("");
+  document.getElementById("heatmapTable").innerHTML = header + body;
+}
+
+function shortTopic(topic) {
+  return topic
+    .replace(" and ", " & ")
+    .replace("Human-Robot Interaction", "HRI")
+    .replace("SLAM and Localization", "SLAM")
+    .replace("Navigation and Planning", "Nav/Plan")
+    .replace("Control and Dynamics", "Control")
+    .replace("Aerial and Field Robots", "Aerial")
+    .replace("Humanoids and Locomotion", "Locomotion")
+    .replace("Simulation and Digital Twins", "Sim")
+    .replace("Safety and Robustness", "Safety")
+    .replace("Soft and Bio-inspired", "Soft");
+}
+
+function hexToRgba(hex, alpha) {
+  const raw = hex.replace("#", "");
+  const r = parseInt(raw.slice(0, 2), 16);
+  const g = parseInt(raw.slice(2, 4), 16);
+  const b = parseInt(raw.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(3)})`;
+}
+
+function haystack(paper) {
+  return [
+    paper.id,
+    paper.session,
+    paper.title,
+    paper.authors,
+    paper.topics.join(" ")
+  ].join(" ").toLowerCase();
+}
+
+function queryMatches(paper) {
+  const terms = [state.q1, state.q2, state.q3].map(value => value.trim().toLowerCase()).filter(Boolean);
+  if (!terms.length) return true;
+  const text = haystack(paper);
+  const checks = terms.map(term => term.split(/\s+/).every(token => text.includes(token)));
+  return state.searchMode === "OR" ? checks.some(Boolean) : checks.every(Boolean);
+}
+
+function authorRangeMatches(paper) {
+  if (!state.authorRange) return true;
+  const [min, max] = state.authorRange.split("-").map(Number);
+  return paper.authorCount >= min && paper.authorCount <= max;
+}
+
+function filteredPapers() {
+  const rows = papers.filter(paper => {
+    if (state.session && paper.session !== state.session) return false;
+    if (state.topic && !paper.topics.includes(state.topic)) return false;
+    if (state.author && !paper.authorList.includes(state.author)) return false;
+    if (!authorRangeMatches(paper)) return false;
+    if (!queryMatches(paper)) return false;
+    return true;
+  });
+  rows.sort((a, b) => {
+    if (state.sort === "title-asc") return a.title.localeCompare(b.title) || a.id - b.id;
+    if (state.sort === "session-asc") return a.session.localeCompare(b.session) || a.id - b.id;
+    if (state.sort === "authors-desc") return b.authorCount - a.authorCount || a.id - b.id;
+    if (state.sort === "authors-asc") return a.authorCount - b.authorCount || a.id - b.id;
+    return a.id - b.id;
+  });
+  return rows;
+}
+
+function renderActiveFilters() {
+  const chips = [];
+  if (state.q1 || state.q2 || state.q3) chips.push(`Search: ${[state.q1, state.q2, state.q3].filter(Boolean).join(` ${state.searchMode} `)}`);
+  if (state.session) chips.push(`Session: ${state.session}`);
+  if (state.topic) chips.push(`Topic: ${state.topic}`);
+  if (state.author) chips.push(`Author: ${state.author}`);
+  if (state.authorRange) chips.push(`Authors: ${state.authorRange.replace("-999", "+")}`);
+  document.getElementById("activeFilters").innerHTML = chips.map(chip => `<button type="button" class="filter-chip" data-clear-chip="${escapeHTML(chip.split(":")[0])}">${escapeHTML(chip)} x</button>`).join("");
+  document.querySelectorAll("[data-clear-chip]").forEach(button => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.clearChip;
+      if (key === "Search") {
+        state.q1 = "";
+        state.q2 = "";
+        state.q3 = "";
+        for (const id of ["q1", "q2", "q3"]) document.getElementById(id).value = "";
+      }
+      if (key === "Session") {
+        state.session = "";
+        document.getElementById("sessionFilter").value = "";
+      }
+      if (key === "Topic") {
+        state.topic = "";
+        document.getElementById("topicFilter").value = "";
+      }
+      if (key === "Author") state.author = "";
+      if (key === "Authors") {
+        state.authorRange = "";
+        document.getElementById("authorFilter").value = "";
+      }
+      state.page = 1;
+      renderResults();
+    });
+  });
+}
+
+function renderResults() {
+  const rows = filteredPapers();
+  const pageSize = state.pageSize === "all" ? rows.length || 1 : Number(state.pageSize);
+  const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  state.page = Math.min(state.page, totalPages);
+  const start = (state.page - 1) * pageSize;
+  const visible = rows.slice(start, start + pageSize);
+
+  document.getElementById("resultCount").textContent = `${rows.length} of ${papers.length} papers`;
+  document.getElementById("pageInfo").textContent = rows.length ? `Page ${state.page} / ${totalPages}` : "";
+  document.getElementById("papers").innerHTML = visible.length
+    ? visible.map(renderPaper).join("")
+    : `<div class="empty">No papers match the current filters.</div>`;
+  document.querySelectorAll(".paper-title").forEach(button => {
+    button.addEventListener("click", () => button.closest(".paper").classList.toggle("open"));
+  });
+  document.querySelectorAll("[data-paper-filter]").forEach(button => {
+    button.addEventListener("click", () => setFilter(button.dataset.paperFilter, button.dataset.filterValue));
+  });
+  renderPager(totalPages);
+  renderActiveFilters();
+  updateFilterButtonStates();
+}
+
+function renderPaper(paper) {
+  const topics = paper.topics.map(topic =>
+    `<button type="button" class="tag topic${state.topic === topic ? " active" : ""}" data-paper-filter="topic" data-filter-value="${escapeHTML(topic)}" aria-pressed="${state.topic === topic ? "true" : "false"}">${escapeHTML(topic)}</button>`
+  ).join("");
+  const authorButtons = paper.authorList.map(author =>
+    `<button type="button" class="author-button${state.author === author ? " active" : ""}" data-paper-filter="author" data-filter-value="${escapeHTML(author)}" aria-pressed="${state.author === author ? "true" : "false"}">${escapeHTML(author)}</button>`
+  ).join("");
+  return `<article class="paper">
+    <div class="paper-head">
+      <button type="button" class="paper-title">${escapeHTML(paper.title)}</button>
+      <a class="paper-link" href="${escapeHTML(paper.href)}" target="_blank" rel="noreferrer">Official page</a>
+    </div>
+    <div class="paper-meta">
+      <span class="tag">ID ${escapeHTML(paper.id)}</span>
+      <button type="button" class="tag session${state.session === paper.session ? " active" : ""}" data-paper-filter="session" data-filter-value="${escapeHTML(paper.session)}" aria-pressed="${state.session === paper.session ? "true" : "false"}">${escapeHTML(paper.session)}</button>
+      <span class="tag">${paper.authorCount} authors</span>
+      ${topics}
+    </div>
+    <div class="paper-authors"><span class="authors-label">Authors</span>${authorButtons}</div>
+    <div class="paper-detail">
+      <div class="detail-grid">
+        <div class="detail-label">Title</div><div>${escapeHTML(paper.title)}</div>
+        <div class="detail-label">Authors</div><div>${authorButtons}</div>
+        <div class="detail-label">Session</div><div>${escapeHTML(paper.session)}</div>
+        <div class="detail-label">Topics</div><div>${escapeHTML(paper.topics.join(", "))}</div>
+      </div>
+    </div>
+  </article>`;
+}
+
+function renderPager(totalPages) {
+  const pager = document.getElementById("pager");
+  if (totalPages <= 1) {
+    pager.innerHTML = "";
+    return;
+  }
+  pager.innerHTML = `
+    <button class="btn" type="button" data-page="prev" ${state.page === 1 ? "disabled" : ""}>Previous</button>
+    <button class="btn" type="button" data-page="next" ${state.page === totalPages ? "disabled" : ""}>Next</button>
+  `;
+  pager.querySelectorAll("[data-page]").forEach(button => {
+    button.addEventListener("click", () => {
+      state.page += button.dataset.page === "next" ? 1 : -1;
+      renderResults();
+      document.getElementById("search").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
+function downloadCsv() {
+  const rows = filteredPapers();
+  const header = ["id", "session", "title", "authors", "author_count", "topics", "official_page"];
+  const lines = [header, ...rows.map(paper => [
+    paper.id,
+    paper.session,
+    paper.title,
+    paper.authors,
+    paper.authorCount,
+    paper.topics.join("; "),
+    paper.href
+  ])].map(row => row.map(csvCell).join(","));
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "rss2026_filtered_papers.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function csvCell(value) {
+  const text = String(value ?? "");
+  return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+}
+
+function clearFilters() {
+  Object.assign(state, {
+    q1: "",
+    q2: "",
+    q3: "",
+    searchMode: "AND",
+    session: "",
+    topic: "",
+    author: "",
+    authorRange: "",
+    sort: "id-asc",
+    pageSize: "25",
+    page: 1
+  });
+  for (const id of ["q1", "q2", "q3"]) document.getElementById(id).value = "";
+  document.getElementById("searchMode").value = "AND";
+  document.getElementById("sessionFilter").value = "";
+  document.getElementById("topicFilter").value = "";
+  document.getElementById("authorFilter").value = "";
+  document.getElementById("sortFilter").value = "id-asc";
+  document.getElementById("pageSizeFilter").value = "25";
+  renderResults();
+}
+
+function bindControls() {
+  for (const id of ["q1", "q2", "q3"]) {
+    document.getElementById(id).addEventListener("input", event => {
+      state[id] = event.target.value;
+      state.page = 1;
+      renderResults();
+    });
+  }
+  document.getElementById("searchMode").addEventListener("change", event => {
+    state.searchMode = event.target.value;
+    state.page = 1;
+    renderResults();
+  });
+  document.getElementById("sessionFilter").addEventListener("change", event => {
+    state.session = event.target.value;
+    state.page = 1;
+    renderResults();
+  });
+  document.getElementById("topicFilter").addEventListener("change", event => {
+    state.topic = event.target.value;
+    state.page = 1;
+    renderResults();
+  });
+  document.getElementById("authorFilter").addEventListener("change", event => {
+    state.authorRange = event.target.value;
+    state.page = 1;
+    renderResults();
+  });
+  document.getElementById("sortFilter").addEventListener("change", event => {
+    state.sort = event.target.value;
+    state.page = 1;
+    renderResults();
+  });
+  document.getElementById("pageSizeFilter").addEventListener("change", event => {
+    state.pageSize = event.target.value;
+    state.page = 1;
+    renderResults();
+  });
+  document.getElementById("clearFilters").addEventListener("click", clearFilters);
+  document.getElementById("downloadCsv").addEventListener("click", downloadCsv);
+  document.getElementById("brandHome").addEventListener("click", clearFilters);
+}
+
+populateSelects();
+renderOverview();
+renderCharts();
+bindControls();
+renderResults();
+</script>
+</body>
+</html>

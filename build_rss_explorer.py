@@ -808,6 +808,12 @@ button.filter-chip:hover {
   cursor: pointer;
 }
 .paper-title:hover { color: var(--accent); }
+.search-hit {
+  padding: 0 2px;
+  border-radius: 3px;
+  background: #fff2a8;
+  color: inherit;
+}
 .paper-link {
   flex: 0 0 auto;
   padding: 4px 8px;
@@ -1225,6 +1231,48 @@ function escapeHTML(value) {
     .replaceAll("'", "&#039;");
 }
 
+function searchTokens() {
+  return [state.q1, state.q2, state.q3]
+    .flatMap(value => value.trim().split(/\s+/))
+    .map(value => value.toLowerCase())
+    .filter(Boolean)
+    .filter((value, index, values) => values.indexOf(value) === index)
+    .sort((a, b) => b.length - a.length);
+}
+
+function highlightedHTML(value) {
+  const text = String(value ?? "");
+  const tokens = searchTokens();
+  if (!tokens.length) return escapeHTML(text);
+
+  const lower = text.toLowerCase();
+  const ranges = [];
+  for (const token of tokens) {
+    let start = 0;
+    while (start < lower.length) {
+      const index = lower.indexOf(token, start);
+      if (index === -1) break;
+      const end = index + token.length;
+      if (!ranges.some(range => index < range.end && end > range.start)) {
+        ranges.push({ start: index, end });
+      }
+      start = end;
+    }
+  }
+  if (!ranges.length) return escapeHTML(text);
+
+  ranges.sort((a, b) => a.start - b.start);
+  const parts = [];
+  let cursor = 0;
+  for (const range of ranges) {
+    if (range.start > cursor) parts.push(escapeHTML(text.slice(cursor, range.start)));
+    parts.push(`<mark class="search-hit">${escapeHTML(text.slice(range.start, range.end))}</mark>`);
+    cursor = range.end;
+  }
+  if (cursor < text.length) parts.push(escapeHTML(text.slice(cursor)));
+  return parts.join("");
+}
+
 function countBy(items, fn) {
   const counts = new Map();
   for (const item of items) {
@@ -1567,14 +1615,14 @@ function renderPaper(paper) {
     `<button type="button" class="tag topic${state.topic === topic ? " active" : ""}" data-paper-filter="topic" data-filter-value="${escapeHTML(topic)}" aria-pressed="${state.topic === topic ? "true" : "false"}">${escapeHTML(topic)}</button>`
   ).join("");
   const authorButtons = paper.authorList.map(author =>
-    `<button type="button" class="author-button${state.author === author ? " active" : ""}" data-paper-filter="author" data-filter-value="${escapeHTML(author)}" aria-pressed="${state.author === author ? "true" : "false"}">${escapeHTML(author)}</button>`
+    `<button type="button" class="author-button${state.author === author ? " active" : ""}" data-paper-filter="author" data-filter-value="${escapeHTML(author)}" aria-pressed="${state.author === author ? "true" : "false"}">${highlightedHTML(author)}</button>`
   ).join("");
   const abstract = paper.abstract
-    ? `<p class="paper-abstract">${escapeHTML(paper.abstract)}</p>`
+    ? `<p class="paper-abstract">${highlightedHTML(paper.abstract)}</p>`
     : `<p class="paper-abstract">Abstract not available.</p>`;
   return `<article class="paper">
     <div class="paper-head">
-      <button type="button" class="paper-title">${escapeHTML(paper.title)}</button>
+      <button type="button" class="paper-title">${highlightedHTML(paper.title)}</button>
       <a class="paper-link" href="${escapeHTML(paper.href)}" target="_blank" rel="noreferrer">Official page</a>
     </div>
     <div class="paper-meta">
@@ -1587,7 +1635,7 @@ function renderPaper(paper) {
     <div class="paper-detail">
       ${abstract}
       <div class="detail-grid">
-        <div class="detail-label">Title</div><div>${escapeHTML(paper.title)}</div>
+        <div class="detail-label">Title</div><div>${highlightedHTML(paper.title)}</div>
         <div class="detail-label">Authors</div><div>${authorButtons}</div>
         <div class="detail-label">Session</div><div>${escapeHTML(paper.session)}</div>
         <div class="detail-label">Topics</div><div>${escapeHTML(paper.topics.join(", "))}</div>

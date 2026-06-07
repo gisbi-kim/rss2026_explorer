@@ -8,8 +8,9 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "outputs" / "rss2026_explorer.html"
+ROOT = Path(__file__).resolve().parent
+OUTPUT = ROOT / "index.html"
+ABSTRACT_SOURCE = ROOT / "data" / "rss2026_papers_1_210_abstracts.txt"
 
 
 TOPIC_PATTERNS = [
@@ -327,18 +328,58 @@ def infer_topics(title: str, session: str) -> list[str]:
     return topics or ["Other"]
 
 
+def parse_abstracts(source: Path = ABSTRACT_SOURCE) -> dict[int, str]:
+    if not source.exists():
+        return {}
+    abstracts: dict[int, str] = {}
+    current_id: int | None = None
+    current_lines: list[str] = []
+    capture = False
+
+    def flush() -> None:
+        nonlocal current_id, current_lines, capture
+        if current_id is not None:
+            abstract = clean_text(" ".join(current_lines))
+            if abstract and abstract not in {"(abstract not found)", "(fetch failed)"}:
+                abstracts[current_id] = abstract
+        current_id = None
+        current_lines = []
+        capture = False
+
+    for raw_line in source.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = raw_line.strip()
+        match = re.match(r"^Paper ID (\d+)$", line)
+        if match:
+            flush()
+            current_id = int(match.group(1))
+            continue
+        if line == "Abstract:":
+            capture = True
+            current_lines = []
+            continue
+        if capture:
+            if line == "-" * 80:
+                flush()
+            elif line:
+                current_lines.append(line)
+    flush()
+    return abstracts
+
+
 def parse_papers(source: Path) -> tuple[list[dict[str, object]], str]:
     text = source.read_text(encoding="utf-8", errors="replace")
+    abstracts = parse_abstracts()
     parser = PaperTableParser()
     parser.feed(text)
     papers = []
     for raw in parser.papers:
+        paper_id = int(str(raw["id"])) if str(raw["id"]).isdigit() else str(raw["id"])
         authors = str(raw["authors"])
         author_list = split_authors(authors)
         session = str(raw["session"])
         title = str(raw["title"])
         paper = {
-            "id": int(str(raw["id"])) if str(raw["id"]).isdigit() else str(raw["id"]),
+            "id": paper_id,
             "session": session,
             "title": title,
             "authors": authors,
@@ -346,6 +387,7 @@ def parse_papers(source: Path) -> tuple[list[dict[str, object]], str]:
             "authorCount": len(author_list),
             "href": str(raw["href"]),
             "topics": infer_topics(title, session),
+            "abstract": abstracts.get(paper_id, ""),
         }
         papers.append(paper)
     return papers, extract_description(text)
@@ -366,6 +408,7 @@ def summarize(papers: list[dict[str, object]], source: Path, description: str) -
         "paperCount": len(papers),
         "sessionCount": len(session_counts),
         "topicCount": len(topic_counts),
+        "abstractCount": sum(1 for paper in papers if str(paper.get("abstract", "")).strip()),
         "avgAuthors": round(avg_authors, 2),
         "largestSession": session_counts.most_common(1)[0] if session_counts else ["", 0],
         "topAuthor": author_counts.most_common(1)[0] if author_counts else ["", 0],
@@ -848,6 +891,12 @@ button.tag:hover {
   font-size: 13px;
 }
 .paper.open .paper-detail { display: block; }
+.paper-abstract {
+  margin: 0 0 12px;
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
 .detail-grid {
   display: grid;
   grid-template-columns: 130px minmax(0, 1fr);
@@ -989,7 +1038,7 @@ button.tag:hover {
     <main>
       <section id="overview">
         <h1>RSS 2026 Paper Explorer</h1>
-        <p class="lede">Search and scan the accepted papers for RSS 2026 by title, author, session, and title-derived topic tags. The source data is the saved RSS accepted papers page from Downloads.</p>
+        <p class="lede">Search and scan the accepted papers for RSS 2026 by title, author, session, abstract, and title-derived topic tags. Abstracts are merged from the official paper pages.</p>
         <div class="metric-grid">
           <div class="metric">
             <div class="value" id="metricPapers">0</div>
@@ -1087,7 +1136,7 @@ button.tag:hover {
         <div class="section-head">
           <div>
             <h2>Find Papers</h2>
-            <div class="section-sub">Search across titles, authors, sessions, IDs, and auto topic tags. Up to three search boxes can be combined with AND or OR.</div>
+            <div class="section-sub">Search across titles, abstracts, authors, sessions, IDs, and auto topic tags. Up to three search boxes can be combined with AND or OR.</div>
           </div>
         </div>
         <div class="toolbar" aria-label="Search and filters">
@@ -1266,7 +1315,7 @@ function renderOverview() {
   document.getElementById("metricTopics").textContent = countBy(papers, paper => paper.topics).length;
   document.getElementById("largestSession").textContent = `${meta.largestSession[0]} has ${meta.largestSession[1]} papers.`;
   document.getElementById("sourceNote").textContent =
-    `Source: ${meta.sourceFile} | source modified ${meta.sourceModified} | generated ${meta.generatedAt}`;
+    `Source: ${meta.sourceFile} | abstracts ${meta.abstractCount}/${meta.paperCount} | generated ${meta.generatedAt}`;
 }
 
 function renderCharts() {
@@ -1347,6 +1396,7 @@ function haystack(paper) {
     paper.session,
     paper.title,
     paper.authors,
+    paper.abstract,
     paper.topics.join(" ")
   ].join(" ").toLowerCase();
 }
@@ -1451,6 +1501,9 @@ function renderPaper(paper) {
   const authorButtons = paper.authorList.map(author =>
     `<button type="button" class="author-button${state.author === author ? " active" : ""}" data-paper-filter="author" data-filter-value="${escapeHTML(author)}" aria-pressed="${state.author === author ? "true" : "false"}">${escapeHTML(author)}</button>`
   ).join("");
+  const abstract = paper.abstract
+    ? `<p class="paper-abstract">${escapeHTML(paper.abstract)}</p>`
+    : `<p class="paper-abstract">Abstract not available.</p>`;
   return `<article class="paper">
     <div class="paper-head">
       <button type="button" class="paper-title">${escapeHTML(paper.title)}</button>
@@ -1464,6 +1517,7 @@ function renderPaper(paper) {
     </div>
     <div class="paper-authors"><span class="authors-label">Authors</span>${authorButtons}</div>
     <div class="paper-detail">
+      ${abstract}
       <div class="detail-grid">
         <div class="detail-label">Title</div><div>${escapeHTML(paper.title)}</div>
         <div class="detail-label">Authors</div><div>${authorButtons}</div>
@@ -1495,7 +1549,7 @@ function renderPager(totalPages) {
 
 function downloadCsv() {
   const rows = filteredPapers();
-  const header = ["id", "session", "title", "authors", "author_count", "topics", "official_page"];
+  const header = ["id", "session", "title", "authors", "author_count", "topics", "abstract", "official_page"];
   const lines = [header, ...rows.map(paper => [
     paper.id,
     paper.session,
@@ -1503,6 +1557,7 @@ function downloadCsv() {
     paper.authors,
     paper.authorCount,
     paper.topics.join("; "),
+    paper.abstract,
     paper.href
   ])].map(row => row.map(csvCell).join(","));
   const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });

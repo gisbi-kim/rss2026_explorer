@@ -1196,7 +1196,7 @@ button.tag:hover {
 <script>
 const papers = JSON.parse(document.getElementById("papers-data").textContent);
 const meta = JSON.parse(document.getElementById("meta-data").textContent);
-const state = {
+const defaultState = {
   q1: "",
   q2: "",
   q3: "",
@@ -1209,6 +1209,7 @@ const state = {
   pageSize: "500",
   page: 1
 };
+const state = { ...defaultState };
 
 const topicPalette = [
   "#0066cc", "#248a3d", "#b25000", "#6e3ad6", "#c0185c",
@@ -1233,6 +1234,71 @@ function countBy(items, fn) {
     }
   }
   return [...counts.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])));
+}
+
+function urlParamMap() {
+  return {
+    q1: "q",
+    q2: "q2",
+    q3: "q3",
+    searchMode: "mode",
+    session: "session",
+    topic: "topic",
+    author: "author",
+    authorRange: "authors",
+    sort: "sort",
+    pageSize: "size",
+    page: "page"
+  };
+}
+
+function allowedValues(id) {
+  const el = document.getElementById(id);
+  return el ? [...el.options].map(option => option.value) : [];
+}
+
+function applyUrlState() {
+  const params = new URLSearchParams(window.location.search);
+  const map = urlParamMap();
+  for (const [key, param] of Object.entries(map)) {
+    if (!params.has(param)) continue;
+    state[key] = params.get(param) || "";
+  }
+
+  if (!["AND", "OR"].includes(state.searchMode)) state.searchMode = defaultState.searchMode;
+  if (!allowedValues("sessionFilter").includes(state.session)) state.session = "";
+  if (!allowedValues("topicFilter").includes(state.topic)) state.topic = "";
+  if (!allowedValues("authorFilter").includes(state.authorRange)) state.authorRange = "";
+  if (!allowedValues("sortFilter").includes(state.sort)) state.sort = defaultState.sort;
+  if (!allowedValues("pageSizeFilter").includes(state.pageSize)) state.pageSize = defaultState.pageSize;
+  state.page = Math.max(1, Number.parseInt(String(state.page), 10) || 1);
+
+  for (const id of ["q1", "q2", "q3"]) document.getElementById(id).value = state[id];
+  document.getElementById("searchMode").value = state.searchMode;
+  document.getElementById("sessionFilter").value = state.session;
+  document.getElementById("topicFilter").value = state.topic;
+  document.getElementById("authorFilter").value = state.authorRange;
+  document.getElementById("sortFilter").value = state.sort;
+  document.getElementById("pageSizeFilter").value = state.pageSize;
+}
+
+function updateUrlFromState() {
+  const url = new URL(window.location.href);
+  const params = url.searchParams;
+  for (const [key, param] of Object.entries(urlParamMap())) {
+    const value = String(state[key] ?? "");
+    const defaultValue = String(defaultState[key] ?? "");
+    if (value && value !== defaultValue) {
+      params.set(param, value);
+    } else {
+      params.delete(param);
+    }
+  }
+  const nextUrl = `${url.pathname}${params.toString() ? `?${params.toString()}` : ""}${url.hash}`;
+  const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (nextUrl !== currentUrl) {
+    window.history.replaceState(null, "", nextUrl);
+  }
 }
 
 function setFilter(kind, value) {
@@ -1493,6 +1559,7 @@ function renderResults() {
   renderPager(totalPages);
   renderActiveFilters();
   updateFilterButtonStates();
+  updateUrlFromState();
 }
 
 function renderPaper(paper) {
@@ -1577,16 +1644,7 @@ function csvCell(value) {
 
 function clearFilters() {
   Object.assign(state, {
-    q1: "",
-    q2: "",
-    q3: "",
-    searchMode: "AND",
-    session: "",
-    topic: "",
-    author: "",
-    authorRange: "",
-    sort: "id-asc",
-    pageSize: "500",
+    ...defaultState,
     page: 1
   });
   for (const id of ["q1", "q2", "q3"]) document.getElementById(id).value = "";
@@ -1643,6 +1701,7 @@ function bindControls() {
 }
 
 populateSelects();
+applyUrlState();
 renderOverview();
 renderCharts();
 bindControls();

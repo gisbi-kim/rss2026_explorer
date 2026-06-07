@@ -1169,6 +1169,7 @@ button.tag:hover {
               <option value="authors-asc">Author count low-high</option>
             </select>
             <select id="pageSizeFilter">
+              <option value="500">500 per page</option>
               <option value="25">25 per page</option>
               <option value="50">50 per page</option>
               <option value="100">100 per page</option>
@@ -1205,7 +1206,7 @@ const state = {
   author: "",
   authorRange: "",
   sort: "id-asc",
-  pageSize: "25",
+  pageSize: "500",
   page: 1
 };
 
@@ -1585,7 +1586,7 @@ function clearFilters() {
     author: "",
     authorRange: "",
     sort: "id-asc",
-    pageSize: "25",
+    pageSize: "500",
     page: 1
   });
   for (const id of ["q1", "q2", "q3"]) document.getElementById(id).value = "";
@@ -1594,7 +1595,7 @@ function clearFilters() {
   document.getElementById("topicFilter").value = "";
   document.getElementById("authorFilter").value = "";
   document.getElementById("sortFilter").value = "id-asc";
-  document.getElementById("pageSizeFilter").value = "25";
+  document.getElementById("pageSizeFilter").value = "500";
   renderResults();
 }
 

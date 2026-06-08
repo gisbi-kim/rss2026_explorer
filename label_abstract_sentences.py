@@ -271,29 +271,217 @@ def split_sentences(text: str) -> list[str]:
 
 def classify_sentence(sentence: str, position: int, total: int) -> tuple[dict[str, object], str, float]:
     lowered = sentence.lower()
-    priority_order = [13, 12, 11, 9, 8, 3, 2, 4, 6, 5, 7, 10]
 
-    # Last-sentence resource statements are common in abstracts and should not be hidden by method/result words.
-    for preferred_label_id in priority_order:
-        for label_id, reason, patterns in RULES:
-            if label_id != preferred_label_id:
-                continue
-            for pattern in patterns:
-                if re.search(pattern, lowered):
-                    confidence = 0.88
-                    if label_id in {8, 9, 13}:
-                        confidence = 0.93
-                    if label_id == 3 and position <= max(2, total // 3):
-                        confidence = 0.91
-                    return LABELS[label_id - 1], reason, confidence
+    def has(*patterns: str) -> bool:
+        return any(re.search(pattern, lowered) for pattern in patterns)
 
-    if total <= 2 and position == 1:
-        return LABELS[4], "short abstract method statement", 0.62
-    if position == 1:
-        return LABELS[0], "opening context sentence", 0.68
-    if position == total and re.search(r"\b(overall|together|these results|this work)\b", lowered):
-        return LABELS[9], "closing implication sentence", 0.7
-    return LABELS[4], "default technical contribution sentence", 0.58
+    def label(label_id: int, reason: str, confidence: float) -> tuple[dict[str, object], str, float]:
+        return LABELS[label_id - 1], reason, confidence
+
+    is_opening = position == 1
+    is_early = position <= max(2, total // 3)
+    is_closing = position == total or position >= max(1, total - 1)
+
+    # Explicit release and future-work statements have a narrow meaning independent of position.
+    if has(
+        r"\bopen[- ]source\b",
+        r"\bpublicly available\b",
+        r"\bwill be released\b",
+        r"\brelease(?:d|s)?\b.*\b(code|data|dataset|benchmark|toolkit|hardware|model|checkpoint)\b",
+        r"\b(code|data|dataset|benchmark|toolkit|hardware design|model|checkpoint)\b.*\b(will be|is|are)\b.*\b(released|available|open)\b",
+    ):
+        return label(13, "semantic: public resource disclosure", 0.94)
+    if has(r"\bfuture work\b", r"\bfuture research\b", r"\bfuture directions?\b", r"\bnext step\b"):
+        return label(12, "semantic: future direction", 0.9)
+    if has(r"\blimitation\b", r"\bfailure case\b", r"\bdeployment constraint\b", r"\bremains unresolved\b"):
+        return label(11, "semantic: stated limitation", 0.9)
+
+    comparison_terms = has(
+        r"\bunlike prior\b",
+        r"\bunlike existing\b",
+        r"\bcompared (?:with|to)\b",
+        r"\bcomparison\b",
+        r"\bbaselines?\b",
+        r"\bstate[- ]of[- ]the[- ]art\b",
+        r"\bbenchmark(?:ed)? against\b",
+        r"\bstrongest prior\b",
+        r"\brgb-only\b",
+        r"\bvision-only\b",
+        r"\bkinematic\b.*\bbaseline",
+    )
+    result_terms = has(
+        r"\bresults? (?:show|demonstrate|indicate)\b",
+        r"\bwe show\b",
+        r"\bexperiments? (?:show|demonstrate|validate)\b",
+        r"\bachieves?\b",
+        r"\battains?\b",
+        r"\bimproves?\b",
+        r"\byields?\b",
+        r"\breduces?\b",
+        r"\boutperform(?:s|ed|ing)?\b",
+        r"\bsuccess rates?\b",
+        r"\bmean absolute error\b",
+        r"\bmae\b",
+        r"\b\d+(?:\.\d+)?\s?%\b",
+        r"\b\d+(?:\.\d+)?\s?(?:ms|s|n|mm|m|hours?)\b",
+    )
+    validation_terms = has(
+        r"\bwe evaluat(?:e|ed)\b",
+        r"\bevaluat(?:e|ed|ion|ing)\b.*\b(?:dataset|benchmark|simulation|robot|task|experiment|environment|scenario)\b",
+        r"\bexperiments? (?:on|in|with|using|across)\b",
+        r"\bbenchmark(?:ed|ing)? (?:on|in|with|using|against)\b",
+        r"\bfield experiments?\b",
+        r"\brollouts?\b.*\b(?:robot|simulation|task|environment)\b",
+    )
+    significance_terms = has(
+        r"\boverall\b",
+        r"\btogether\b",
+        r"\bthese results demonstrate\b",
+        r"\bnotably\b.*\boffers?\b.*\bpathway\b",
+        r"\btransfers? zero-shot\b.*\bpathway\b",
+        r"\bprovides?\b.*\bpath\b",
+        r"\boffers?\b.*\bpathway\b",
+        r"\bunlocks?\b",
+        r"\badvances?\b",
+        r"\benable(?:s|d)?\b.*\bdeployment\b",
+        r"\bpractical\b.*\bdeployment\b",
+        r"\bintended to enable\b",
+        r"\bbroader (?:versatility|applicability)\b",
+    )
+
+    if significance_terms and is_closing and not comparison_terms:
+        return label(10, "semantic: broader implication or deployment meaning", 0.84)
+    if comparison_terms and (result_terms or has(r"\bagainst\b", r"\bcompared\b", r"\bbaseline", r"\bunlike prior\b", r"\bunlike existing\b")):
+        return label(9, "semantic: baseline or prior-method comparison", 0.9)
+    if result_terms:
+        return label(8, "semantic: reported empirical result", 0.88)
+    if validation_terms:
+        return label(7, "semantic: evaluation setup or scenario", 0.87)
+    if significance_terms and is_closing:
+        return label(10, "semantic: broader implication or deployment meaning", 0.82)
+
+    prior_subject = has(
+        r"\bexisting\b",
+        r"\bprior\b",
+        r"\bcurrent\b",
+        r"\brecent\b",
+        r"\bstandard\b",
+        r"\bnaive(?:ly)?\b",
+        r"\bconventional\b",
+        r"\bprevious\b",
+        r"\bmost\b.*\b(?:methods|approaches|policies|models|systems)\b",
+    )
+    limitation_predicate = has(
+        r"\bfail(?:s|ed)?\b",
+        r"\bstruggle(?:s|d)?\b",
+        r"\blimit(?:s|ed|ing)?\b",
+        r"\bsuffer(?:s|ed)? from\b",
+        r"\brely\b.*\b(?:costly|limited|scarce|imperfect|annotation|teleoperation|manual)\b",
+        r"\brequire(?:s|d)?\b.*\b(?:costly|large|paired|manual|thousands|labels|annotations)\b",
+        r"\bdata scarcity\b",
+        r"\bchallenging due to\b",
+        r"\bbarrier remains\b",
+        r"\bprohibitively\b",
+        r"\binsufficient\b",
+        r"\bwithout\b.*\b(?:explicit|model|labels|supervision)\b",
+    )
+    if has(r"\bprior work\b.*\battempted\b", r"\bprevious work\b.*\battempted\b"):
+        return label(3, "semantic: prior-work framing before this paper", 0.82)
+    if (prior_subject and limitation_predicate) or has(r"\bwhile\b.*\bremain(?:s)? challenging\b"):
+        return label(3, "semantic: limitation of prior or current approaches", 0.9 if is_early else 0.82)
+
+    method_intro = has(
+        r"\bwe (?:propose|present|introduce|develop|design|build|construct|extend|augment)\b",
+        r"\bthis paper (?:proposes|presents|introduces|develops)\b",
+        r"\bour (?:method|approach|framework|system|model|policy|pipeline|algorithm|controller)\b",
+        r"\b(?:[a-z0-9_-]+) maintains\b",
+        r"\bwe explicitly model\b",
+        r"\bwe consider\b.*\bproblem\b",
+        r"\bwe study\b",
+    )
+    mechanism_terms = has(
+        r"\bkey (?:idea|insight)\b",
+        r"\bat the core\b",
+        r"\bcore of\b",
+        r"\bconsists? of\b",
+        r"\bdecompose\b",
+        r"\bdecomposition\b",
+        r"\balign(?:s|ment)?\b",
+        r"\bcondition(?:s|ed|ing)?\b",
+        r"\bleverages?\b",
+        r"\bvia\b",
+        r"\bby (?:projecting|transforming|combining|representing|modeling|learning|training|using)\b",
+        r"\bunified\b.*\b(?:representation|space|format|framework)\b",
+        r"\bobject[- ]centric\b",
+        r"\blatent\b",
+        r"\btoken(?:s|ization)?\b",
+        r"\bmaps?\b.*\bto\b",
+    )
+    goal_terms = has(
+        r"\bwe aim\b",
+        r"\bour goal\b",
+        r"\bseeks? to\b",
+        r"\bto enable\b",
+        r"\bto support\b",
+        r"\bto address\b",
+        r"\bto bridge\b",
+        r"\bto mitigate\b",
+    )
+
+    if has(r"\bto support this statement\b.*\bresults?\b", r"\bpreliminary results\b", r"\buser studies\b"):
+        return label(7, "semantic: supporting evaluation evidence", 0.82)
+    if has(r"\bto demonstrate\b.*\beffectiveness\b", r"\bwe choose\b.*\bdomain\b"):
+        return label(7, "semantic: evaluation setup or scenario", 0.82)
+    # "To address this, we propose..." is a method sentence; a pure "to enable..." sentence is goal.
+    if method_intro and mechanism_terms and not has(r"\bwe evaluate\b"):
+        return label(5, "semantic: proposed method with mechanism", 0.84)
+    if method_intro:
+        return label(5, "semantic: proposed method or system", 0.86)
+    if mechanism_terms:
+        return label(6, "semantic: technical mechanism or key idea", 0.82)
+    if goal_terms:
+        return label(4, "semantic: stated objective", 0.76)
+
+    problem_terms = has(
+        r"\bopen challenge\b",
+        r"\bcentral challenge\b",
+        r"\bfundamentally challenging\b",
+        r"\bdifficult\b",
+        r"\brequires?\b",
+        r"\bmust\b",
+        r"\bneed(?:s|ed)?\b",
+        r"\bproblem\b",
+        r"\bbottleneck\b",
+    )
+    if problem_terms:
+        return label(2, "semantic: task requirement or problem statement", 0.78)
+    if has(
+        r"\bhowever\b.*\b(?:challenging|difficult|hinder|degraded|incomplete|sparse|non-uniform|gap)\b",
+        r"\b(?:hinder|degraded|incomplete observations?|sparse and non-uniform)\b",
+        r"\bembodiment gap\b.*\bchallenging\b",
+    ):
+        return label(2, "semantic: problem property or obstacle", 0.76)
+
+    if is_opening and has(
+        r"\bfundamental representation\b",
+        r"\bcritical method\b",
+        r"\bsignificant potential\b",
+        r"\bhas the potential\b",
+        r"\bshown promise\b",
+        r"\boffer(?:s)? significant potential\b",
+    ):
+        return label(1, "semantic: opening background context", 0.76)
+    if has(r"\bshown promise\b", r"\boffer(?:s)? significant potential\b"):
+        return label(1, "semantic: field background or motivation", 0.7)
+
+    if significance_terms:
+        return label(10, "semantic: broader implication or deployment meaning", 0.74)
+
+    if is_opening:
+        return label(1, "semantic: opening background context", 0.72)
+    if is_closing:
+        return label(10, "semantic: closing implication", 0.62)
+    return label(6, "semantic: contribution detail inferred from abstract context", 0.6)
 
 
 def build_labeled_data() -> dict[str, object]:

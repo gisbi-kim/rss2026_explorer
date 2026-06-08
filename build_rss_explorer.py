@@ -513,6 +513,35 @@ button { cursor: pointer; }
   border-color: rgba(0, 102, 204, 0.18);
   color: var(--accent);
 }
+.header-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid rgba(0, 102, 204, 0.22);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.header-button:hover {
+  border-color: rgba(0, 102, 204, 0.42);
+  background: rgba(0, 102, 204, 0.12);
+  text-decoration: none;
+}
+.header-button.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.18);
+}
+.header-button.primary:hover {
+  background: var(--accent-hover);
+  color: #ffffff;
+}
 .layout {
   max-width: 1440px;
   margin: 0 auto;
@@ -559,6 +588,7 @@ main {
   padding: 30px 0 56px;
 }
 section {
+  min-width: 0;
   scroll-margin-top: 76px;
   margin-bottom: 34px;
 }
@@ -727,12 +757,16 @@ h3 {
 .filter-row select { flex: 1 1 150px; }
 .view-row select { flex: 1 1 170px; }
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 36px;
   padding: 7px 12px;
   border: 1px solid var(--border);
   border-radius: 7px;
   background: var(--panel);
   color: var(--text-2);
+  text-decoration: none;
 }
 .btn:hover {
   border-color: var(--accent);
@@ -783,9 +817,12 @@ button.filter-chip:hover {
 }
 .papers {
   display: grid;
+  min-width: 0;
   gap: 10px;
 }
 .paper {
+  min-width: 0;
+  overflow: hidden;
   padding: 14px 15px;
   border: 1px solid var(--border-soft);
   border-radius: 8px;
@@ -805,6 +842,7 @@ button.filter-chip:hover {
   font-size: 16px;
   font-weight: 680;
   line-height: 1.35;
+  overflow-wrap: anywhere;
   cursor: pointer;
 }
 .paper-title:hover { color: var(--accent); }
@@ -902,11 +940,14 @@ button.tag:hover {
   color: var(--text-2);
   font-size: 13.5px;
   line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 .detail-grid {
   display: grid;
+  min-width: 0;
   grid-template-columns: 130px minmax(0, 1fr);
   gap: 6px 12px;
+  overflow-wrap: anywhere;
 }
 .detail-label {
   color: var(--muted);
@@ -923,12 +964,15 @@ button.tag:hover {
   margin-top: 16px;
 }
 .heatmap-wrap {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
   border: 1px solid var(--border-soft);
   border-radius: 8px;
 }
 .heatmap {
-  width: 100%;
+  width: max-content;
   min-width: 860px;
   border-collapse: collapse;
   font-size: 12px;
@@ -995,14 +1039,30 @@ button.tag:hover {
   .grid-2 { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
-  .topbar .meta, .topbar .right .pill:not(.accent) { display: none; }
-  .topbar .inner { padding: 0 14px; }
+  .topbar { height: auto; min-height: 54px; }
+  .topbar .meta, .topbar .right .pill { display: none; }
+  .topbar .inner {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 8px 14px;
+  }
+  .brand { flex: 1 1 100%; }
+  .topbar .right {
+    width: 100%;
+    margin-left: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .header-button { width: 100%; }
   main { padding-top: 20px; }
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .section-head { align-items: start; flex-direction: column; }
   .toolbar-row { flex-wrap: wrap; }
   .toolbar input[type="text"], .toolbar select, .btn { flex: 1 1 100%; }
   .bar-row { grid-template-columns: minmax(120px, 1fr) minmax(80px, 1fr) 36px; }
+  .heatmap { width: 100%; min-width: 100%; table-layout: fixed; font-size: 10px; }
+  .heatmap th, .heatmap td { padding: 4px 2px; word-break: break-word; }
+  .heat-cell { min-width: 0; height: 24px; line-height: 24px; }
   .paper-head { flex-direction: column; }
   .paper-link { align-self: flex-start; }
   .detail-grid { grid-template-columns: 1fr; }
@@ -1019,6 +1079,8 @@ button.tag:hover {
       <a class="brand" href="#overview" id="brandHome">RSS 2026 Paper Explorer</a>
       <div class="meta">Accepted Papers / Robotics: Science and Systems</div>
       <div class="right">
+        <a class="header-button primary" href="abstract_sentence_labels.html">Sentence labels</a>
+        <a class="header-button" href="abstract_sentence_labels_ko.html">Korean labels</a>
         <span class="pill accent"><b id="topPaperCount">0</b> papers</span>
         <span class="pill"><b id="topSessionCount">0</b> sessions</span>
       </div>
@@ -1182,6 +1244,9 @@ button.tag:hover {
               <option value="all">All</option>
             </select>
             <button class="btn" id="downloadCsv" type="button">CSV</button>
+            <a class="btn" href="abstract_sentence_labels.html">Sentence labels</a>
+            <a class="btn" href="abstract_sentence_labels_ko.html">Korean labels</a>
+            <button class="btn" id="toggleAbstracts" type="button" aria-pressed="true">Hide all abstracts</button>
             <button class="btn" id="clearFilters" type="button">Clear</button>
           </div>
           <div class="active-filters" id="activeFilters"></div>
@@ -1213,6 +1278,7 @@ const defaultState = {
   authorRange: "",
   sort: "id-asc",
   pageSize: "500",
+  abstractsOpen: true,
   page: 1
 };
 const state = { ...defaultState };
@@ -1607,6 +1673,7 @@ function renderResults() {
   renderPager(totalPages);
   renderActiveFilters();
   updateFilterButtonStates();
+  updateAbstractToggle();
   updateUrlFromState();
 }
 
@@ -1620,7 +1687,7 @@ function renderPaper(paper) {
   const abstract = paper.abstract
     ? `<p class="paper-abstract">${highlightedHTML(paper.abstract)}</p>`
     : `<p class="paper-abstract">Abstract not available.</p>`;
-  return `<article class="paper">
+  return `<article class="paper${state.abstractsOpen ? " open" : ""}">
     <div class="paper-head">
       <button type="button" class="paper-title">${highlightedHTML(paper.title)}</button>
       <a class="paper-link" href="${escapeHTML(paper.href)}" target="_blank" rel="noreferrer">Official page</a>
@@ -1685,6 +1752,20 @@ function downloadCsv() {
   URL.revokeObjectURL(url);
 }
 
+function updateAbstractToggle() {
+  const button = document.getElementById("toggleAbstracts");
+  button.textContent = state.abstractsOpen ? "Hide all abstracts" : "Show all abstracts";
+  button.setAttribute("aria-pressed", state.abstractsOpen ? "true" : "false");
+}
+
+function toggleAbstracts() {
+  state.abstractsOpen = !state.abstractsOpen;
+  document.querySelectorAll(".paper").forEach(paper => {
+    paper.classList.toggle("open", state.abstractsOpen);
+  });
+  updateAbstractToggle();
+}
+
 function csvCell(value) {
   const text = String(value ?? "");
   return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
@@ -1702,6 +1783,7 @@ function clearFilters() {
   document.getElementById("authorFilter").value = "";
   document.getElementById("sortFilter").value = "id-asc";
   document.getElementById("pageSizeFilter").value = "500";
+  document.getElementById("toggleAbstracts").setAttribute("aria-pressed", "true");
   renderResults();
 }
 
@@ -1745,6 +1827,7 @@ function bindControls() {
   });
   document.getElementById("clearFilters").addEventListener("click", clearFilters);
   document.getElementById("downloadCsv").addEventListener("click", downloadCsv);
+  document.getElementById("toggleAbstracts").addEventListener("click", toggleAbstracts);
   document.getElementById("brandHome").addEventListener("click", clearFilters);
 }
 

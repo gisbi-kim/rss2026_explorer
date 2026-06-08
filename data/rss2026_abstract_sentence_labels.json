@@ -3,20 +3,20 @@
     "title": "RSS 2026 abstract sentence labels",
     "source": "rss2026_explorer embedded abstracts",
     "prompt_url": "https://gisbi-kim.github.io/paper-reading-13-questions/",
-    "generated_at": "2026-06-08T12:34:43",
+    "generated_at": "2026-06-08T12:59:25",
     "paper_count": 210,
     "sentence_count": 1644,
     "label_counts": {
-      "1": 54,
+      "1": 71,
       "2": 138,
       "3": 182,
       "4": 43,
-      "5": 532,
+      "5": 573,
       "6": 229,
-      "7": 152,
+      "7": 91,
       "8": 160,
       "9": 113,
-      "10": 8,
+      "10": 11,
       "11": 5,
       "12": 0,
       "13": 28
@@ -373,11 +373,11 @@
         {
           "sentence_index": 7,
           "sentence": "DexImit is capable of handling diverse manipulation tasks, including tool use (e.g., cutting an apple), long-horizon tasks (e.g., making a beverage), and fine-grained manipulations (e.g., stacking cups).",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         }
       ]
     },
@@ -897,11 +897,11 @@
         {
           "sentence_index": 4,
           "sentence": "Attention-based retrieval provides a promising alternative, as both queries and keys are learned from data without making task-specific assumptions.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 5,
@@ -933,11 +933,11 @@
         {
           "sentence_index": 8,
           "sentence": "This supervision encourages the retrieval module to focus on information that is relevant to the task.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 9,
@@ -1176,11 +1176,11 @@
         {
           "sentence_index": 1,
           "sentence": "Humanoid robots exhibit significant potential for executing complex whole-body interaction tasks in unstructured environments.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -1685,11 +1685,11 @@
         {
           "sentence_index": 2,
           "sentence": "In this paper, we address humanoid skateboarding, a highly challenging task requiring stable dynamic maneuvering on an underactuated wheeled platform.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 3,
@@ -2182,11 +2182,11 @@
         {
           "sentence_index": 1,
           "sentence": "Real-time whole-body teleoperation is a critical method for humanoid robots to perform complex tasks in unstructured environments.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -2434,11 +2434,11 @@
         {
           "sentence_index": 2,
           "sentence": "While reinforcement learning with velocity-commanded policies has achieved remarkable robustness in humanoid locomotion, this approach lacks explicit control of the foothold placement, leading to unsafe behavior, such as stepping onto human feet, or imprecise navigation, hindering the following manipulation task.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 3,
@@ -2852,11 +2852,11 @@
         {
           "sentence_index": 1,
           "sentence": "Multi-robot teams are increasingly gaining attention due to their ability to scale up in terms of task workloads and complexities.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -4173,11 +4173,11 @@
         {
           "sentence_index": 7,
           "sentence": "Additionally, we demonstrate that the fine-grained geometry captured by BIEVR-LIO can be used for downstream tasks such as elevation mapping for robot locomotion.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         }
       ]
     },
@@ -4197,11 +4197,11 @@
         {
           "sentence_index": 1,
           "sentence": "Localization and mapping of an environment are crucial tasks for any robot operating in unstructured environments.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -4553,11 +4553,11 @@
         {
           "sentence_index": 5,
           "sentence": "Furthermore, a retrieval-based memory unit allows the system to reuse successful strategies across recurrent tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 6,
@@ -4733,11 +4733,11 @@
         {
           "sentence_index": 7,
           "sentence": "Across downstream tasks including imitation learning, sim-to-real transfer, grasp synthesis, and collision-free motion planning, we observe consistent gains in performance, suggesting the promise of this alternative 3D sensing module for robotic manipulation.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         }
       ]
     },
@@ -4895,11 +4895,11 @@
         {
           "sentence_index": 7,
           "sentence": "Empirically, Legato produces smoother trajectories and reduces spurious multimodal switching during execution, leading to less hesitation and shorter task completion time.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 8,
@@ -5023,11 +5023,11 @@
         {
           "sentence_index": 1,
           "sentence": "Whole-arm manipulation involves direct contact with the environment while the robot completes a task by distributing contact across multiple links as contacts form, slide, and break.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -5164,11 +5164,11 @@
         {
           "sentence_index": 6,
           "sentence": "As a result, the derived controllers are more aware of task sensitivities to uncertainty, yielding high reliability without compromising performance.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 7,
@@ -5307,11 +5307,11 @@
         {
           "sentence_index": 1,
           "sentence": "Zero-Shot Object Goal Navigation (ZSON) is an important task for robots.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -5772,11 +5772,11 @@
         {
           "sentence_index": 6,
           "sentence": "Consequently, the agent develops diverse navigation behaviors and resists collapse during long-horizon tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 7,
@@ -5964,11 +5964,11 @@
         {
           "sentence_index": 6,
           "sentence": "Our training strategy is entirely annotation-free and self-supervised, leveraging tasks such as map inpainting and inverse reinforcement learning (IRL) to learn both map representations and traversability.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 7,
@@ -6306,11 +6306,11 @@
         {
           "sentence_index": 6,
           "sentence": "By improving low-level controllability, Steerable Policies can unlock pretrained knowledge in VLMs, enabling improved task generalization.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
+          "label_id": 10,
+          "label_name": "의의",
+          "label_english": "Significance",
           "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "rule_reason": "broader significance"
         },
         {
           "sentence_index": 7,
@@ -7034,11 +7034,11 @@
         {
           "sentence_index": 1,
           "sentence": "Equipping embodied agents with the ability to reason about tasks, foresee physical outcomes, and generate precise actions is essential for general-purpose manipulation.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -7052,11 +7052,11 @@
         {
           "sentence_index": 3,
           "sentence": "These methods rarely integrate both capabilities simultaneously to guide action generation, leading to suboptimal performance in complex, long-horizon manipulation tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 4,
@@ -7411,11 +7411,11 @@
         {
           "sentence_index": 5,
           "sentence": "On some of the hardest tasks, RECAP more than doubles task throughput and roughly halves the task failure rate.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         }
       ]
     },
@@ -7512,11 +7512,11 @@
         {
           "sentence_index": 1,
           "sentence": "Recent advances in vision-language-action (VLA) models have motivated the extension of their capabilities to embodied settings, where reinforcement learning (RL) offers a principled way to optimize task success through interaction.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
+          "label_id": 10,
+          "label_name": "의의",
+          "label_english": "Significance",
           "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "rule_reason": "broader significance"
         },
         {
           "sentence_index": 2,
@@ -7758,11 +7758,11 @@
         {
           "sentence_index": 7,
           "sentence": "The ecosystem supports the full spectrum of embodied tasks: static and mobile manipulation, navigation, and multiroom long-horizon tasks requiring coordinated perception, planning, and interaction across entire indoor environments.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 8,
@@ -7905,11 +7905,11 @@
         {
           "sentence_index": 2,
           "sentence": "While massively parallel simulators have catalyzed breakthroughs in proprioception-based locomotion, their potential remains largely untapped for vision-centric tasks due to the prohibitive computational overhead of large-scale photorealistic rendering.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 3,
@@ -7993,11 +7993,11 @@
         {
           "sentence_index": 1,
           "sentence": "Despite the demand for robots in high-value clinical tasks like bathing, contemporary systems still lack the safety and reliability required for complex, sustained physical interaction with humans.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -8117,11 +8117,11 @@
         {
           "sentence_index": 6,
           "sentence": "RoboVista contains 474 VQAs with human annotated reasoning and covers 39 unique task types in agricultural, industrial, domestic, surgical robotics, autonomous driving, and open robot datasets.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 7,
@@ -8362,11 +8362,11 @@
         {
           "sentence_index": 5,
           "sentence": "OOPSIEVERSE provides damage as an explicit, physically-grounded, and task-agnostic signal by converting sources such as contact forces, temperature changes, and liquid interactions into corresponding mechanical, thermal or fluid damage.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 6,
@@ -8859,11 +8859,11 @@
         {
           "sentence_index": 4,
           "sentence": "Namely, we prove the Bellman Value for a complex task defined in temporal logic can be decomposed into a graph of Bellman Values, where the graph is connected by a set of well-studied Bellman equations (BEs): the Reach-Avoid BE, the Avoid BE, and a novel type, the Reach-Avoid-Loop BE.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 5,
@@ -9632,11 +9632,11 @@
         {
           "sentence_index": 3,
           "sentence": "CANINE decomposes a complex coordination task into sub-skills and operates at two levels.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 4,
@@ -9777,11 +9777,11 @@
         {
           "sentence_index": 1,
           "sentence": "Learning reward functions from demonstrations assumes that demonstrations provide adequate supervision over all features—or task-relevant aspects of behavior.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -9993,11 +9993,11 @@
         {
           "sentence_index": 5,
           "sentence": "As a result, interaction policies that engage users only upon failure may further reduce engagement by relegating users to passive observers for long stretches of the task.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 6,
@@ -10038,11 +10038,11 @@
         {
           "sentence_index": 10,
           "sentence": "Rather than requesting input only when difficulties arise during task execution, the robot proactively considers the user’s preferred level of engagement throughout the task, balancing autonomy and interaction while ensuring task success.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 11,
@@ -10668,11 +10668,11 @@
         {
           "sentence_index": 2,
           "sentence": "For example, even in a simple pick-up task with identical scene layouts, camera viewpoints, and illumination, performance can degrade substantially when the object is placed at unseen locations.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 3,
@@ -10746,11 +10746,11 @@
         {
           "sentence_index": 3,
           "sentence": "We demonstrate this method on a non-planar rope manipulation task called the flying knot.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 4,
@@ -10842,11 +10842,11 @@
         {
           "sentence_index": 4,
           "sentence": "From the merged point cloud computed from RGB-D images and camera extrinsics, we re-render multi-view four-channel image observations with depth and 3D coordinates, including dynamic wrist views, to provide clearer views of target objects for high-precision manipulation tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 5,
@@ -11024,11 +11024,11 @@
         {
           "sentence_index": 7,
           "sentence": "To our knowledge, it is also the first to autonomously complete long-horizon dexterous manipulation tasks that demand highly precise control with an anthropomorphic hand—successfully executing up to 11 sequential stages and sustaining continuous operation for 2.5 minutes.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         }
       ]
     },
@@ -11839,11 +11839,11 @@
         {
           "sentence_index": 1,
           "sentence": "Point clouds are a fundamental representation for robotic perception tasks such as localization, mapping, and object pose estimation.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -11857,11 +11857,11 @@
         {
           "sentence_index": 3,
           "sentence": "Such sparsity and non-uniformity hinder reliable geometric reasoning, leading to degraded performance in downstream perception tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 4,
@@ -11988,11 +11988,11 @@
         {
           "sentence_index": 3,
           "sentence": "The conventional wisdom is to select gains based on desired task compliance or stiffness.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 4,
@@ -12033,11 +12033,11 @@
         {
           "sentence_index": 8,
           "sentence": "These findings reveal that optimal gain selection depends not on the desired task behavior, but on the learning paradigm employed.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         }
       ]
     },
@@ -12056,11 +12056,11 @@
         {
           "sentence_index": 1,
           "sentence": "General-purpose robot reward models are typically trained to predict absolute task progress from expert demonstrations, providing only local, frame-level supervision.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -12083,11 +12083,11 @@
         {
           "sentence_index": 4,
           "sentence": "Robometer is trained with a dual objective: a frame-level progress loss that anchors reward magnitude on expert data, and a trajectory-comparison preference loss that imposes global ordering constraints across trajectories of the same task, enabling effective learning from suboptimal and failed trajectories.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 5,
@@ -12124,11 +12124,11 @@
         {
           "sentence_index": 1,
           "sentence": "The prevalent paradigm in robot learning attempts to generalize across environments, embodiments, and tasks with language prompts at runtime.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -12604,11 +12604,11 @@
         {
           "sentence_index": 2,
           "sentence": "This task-state entanglement provides a pathway for observation leakage – networks learn scene-to-action shortcuts that bypass language grounding entirely.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 3,
@@ -12746,11 +12746,11 @@
         {
           "sentence_index": 5,
           "sentence": "We demonstrate this on a challenging reactive catching task.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 6,
@@ -12971,11 +12971,11 @@
         {
           "sentence_index": 1,
           "sentence": "The ability to manipulate tools significantly expands the set of tasks a robot can perform.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -13263,11 +13263,11 @@
         {
           "sentence_index": 6,
           "sentence": "We analyze the theoretical properties of the proposed operator, including contraction guarantees, and show how it encodes task progression while mitigating truncation bias.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 7,
@@ -13323,11 +13323,11 @@
         {
           "sentence_index": 3,
           "sentence": "Consequently, these models exhibit a large sim-to-real gap for many dexterous tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 4,
@@ -13630,11 +13630,11 @@
         {
           "sentence_index": 3,
           "sentence": "Beyond forward dynamics, accurate actuator models also support force perception, which is crucial for jointly modeling force and position control in manipulation tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 4,
@@ -13761,11 +13761,11 @@
         {
           "sentence_index": 7,
           "sentence": "Across standard benchmarks spanning offline RL planning (D4RL), configuration-space motion planning, and visuomotor diffusion policies, Muninn delivers up to 4.6× wall-clock speedups across several trajectory diffusion planners and diffusion policies by reducing denoiser evaluations, while preserving task performance and safety metrics.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 8,
@@ -14017,11 +14017,11 @@
         {
           "sentence_index": 10,
           "sentence": "Finally, we demonstrate the proposed method on real robotic hardware on a T-shaped object pushing task.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         }
       ]
     },
@@ -14039,11 +14039,11 @@
         {
           "sentence_index": 1,
           "sentence": "Despite recent efforts to collect multi-task or multiembodiment datasets, to design efficient recipes for training Vision-Language-Action models (VLAs), and to showcase these models on selected robot platforms, generalist robot capabilities and cross-embodiment transfer remain largely elusive ideals.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -14373,11 +14373,11 @@
         {
           "sentence_index": 1,
           "sentence": "Position tracking based on bearing measurements and Ultra-wideband (UWB) ranging is widely used in robotic navigation tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -15261,11 +15261,11 @@
         {
           "sentence_index": 1,
           "sentence": "Recent advances in robotic manipulation remain hindered by the inevitability of task failures, particularly in dynamic and unstructured environments.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
+          "label_id": 10,
+          "label_name": "의의",
+          "label_english": "Significance",
           "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "rule_reason": "broader significance"
         },
         {
           "sentence_index": 2,
@@ -15297,11 +15297,11 @@
         {
           "sentence_index": 5,
           "sentence": "During execution, AgentChord operates through a choreography of specialized agents, covering a composer for task structuring, an arranger for execution compilation, and a conductor for recovery orchestration.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 6,
@@ -15852,11 +15852,11 @@
         {
           "sentence_index": 5,
           "sentence": "We consider solution manifolds induced by general task-defining maps and construct an implicit scalar field over the configuration space, whose zero-level set corresponds to the solution manifold.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 6,
@@ -16853,11 +16853,11 @@
         {
           "sentence_index": 10,
           "sentence": "Then the benefits and potential applications of our proposed sensors are validated in several tasks, including the teleoperative transfer of a test tube into a rack and stable robotic grasping under external interference.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         },
         {
           "sentence_index": 11,
@@ -16975,11 +16975,11 @@
         {
           "sentence_index": 11,
           "sentence": "Moreover, the proposed gripper can reliably completes long sequential “grasp-place” tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 5,
+          "label_name": "방법",
+          "label_english": "Method",
+          "confidence": 0.58,
+          "rule_reason": "default technical contribution sentence"
         }
       ]
     },
@@ -17560,11 +17560,11 @@
         {
           "sentence_index": 1,
           "sentence": "Recent imitation learning (IL) algorithms – such as flow-matching and diffusion policies – demonstrate remarkable performance in learning complex manipulation tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
@@ -17663,11 +17663,11 @@
         {
           "sentence_index": 1,
           "sentence": "Efficient exploration remains a bottleneck in reinforcement learning (RL), particularly for long-horizon, high-dimensional tasks.",
-          "label_id": 7,
-          "label_name": "검증",
-          "label_english": "Validation",
-          "confidence": 0.88,
-          "rule_reason": "validation setup"
+          "label_id": 1,
+          "label_name": "배경",
+          "label_english": "Background",
+          "confidence": 0.68,
+          "rule_reason": "opening context sentence"
         },
         {
           "sentence_index": 2,
